@@ -78,4 +78,29 @@ public class UsersServiceImpl : IUsersService
     {
         return new DefaultUserSettings();
     }
+
+    public IQueryable<User> GetUsersQueryable(UsersFilterOptions options)
+    {
+        IQueryable<User> queryable = _userManager.Users;
+
+        switch (options.SortBy)
+        {
+            case UsersFilterOptions.SortByEnum.NewestToOldest:
+                queryable = queryable.OrderByDescending(u => u.CreatedAt);
+                break;
+            case UsersFilterOptions.SortByEnum.OldestToNewest:
+                queryable = queryable.OrderBy(u => u.CreatedAt);
+                break;
+            case UsersFilterOptions.SortByEnum.Name:
+                queryable = queryable.OrderBy(u => u.LastName).ThenBy(u => u.FirstName).ThenBy(u => u.Patronymic);
+                break;
+        }
+
+        if (options.Roles != null && options.Roles.Count > 0)
+        {
+            queryable = queryable.Where(u => u.Roles.Any(r => options.Roles.Contains(r.Name)));
+        }
+
+        return queryable;
+    }
 }

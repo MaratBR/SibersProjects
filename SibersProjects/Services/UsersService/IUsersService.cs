@@ -8,4 +8,5 @@ public interface IUsersService
     Task<User> Update(User user, UpdateUserOptions options);
     Task<User> CreateDefaultUser();
     DefaultUserSettings GetDefaultUserSettings();
+    IQueryable<User> GetUsersQueryable(UsersFilterOptions options);
 }

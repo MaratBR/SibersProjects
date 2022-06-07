@@ -1,13 +1,12 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
 
 namespace SibersProjects.Models;
 
 public class User : IdentityUser
 {
-    public const string DefaultUsername = "Admin";
-    public const string DefaultPassword = "admin";
-    
     public ICollection<Role> Roles { get; set; } = new List<Role>();
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;

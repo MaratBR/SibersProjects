@@ -15,7 +15,7 @@ using SibersProjects.Utils;
 namespace SibersProjects.Controllers;
 
 [ApiController]
-[Authorize(Roles = RoleNames.Superuser)]
+//[Authorize(Roles = RoleNames.Superuser)]
 [Route("api/[controller]")]
 public class EmployeesController : Controller
 {
@@ -30,7 +30,7 @@ public class EmployeesController : Controller
         _mapper = mapper;
     }
 
-    public class GetEmployeesOptions
+    public class GetEmployeesOptions : UsersFilterOptions
     {
         [Range(1, 2000)]
         public int Page { get; set; } = 1;
@@ -39,10 +39,11 @@ public class EmployeesController : Controller
     }
     
     [HttpGet]
-    public async Task<PaginationResponse<UserDto>> GetEmployees(GetEmployeesOptions options)
+    public async Task<PaginationResponse<UserDto>> GetEmployees([FromQuery] GetEmployeesOptions options)
     {
-        var employees = await _userManager.Users
-            .Skip(options.PageSize * options.Page)
+        var employees = await _usersService.GetUsersQueryable(options)
+            .Skip(options.PageSize * (options.Page - 1))
+            .Take(options.PageSize)
             .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
             .ToListAsync();
         return new PaginationResponse<UserDto>
