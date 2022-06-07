@@ -1,4 +1,5 @@
 using SibersProjects.Services.ProjectService;
+using SibersProjects.Services.RoleHelperService;
 using SibersProjects.Services.TokenService;
 using SibersProjects.Services.UsersService;
 
@@ -11,6 +12,7 @@ public static class ServiceCollectionExtensions
         serviceCollection 
             .AddScoped<ITokenService, TokenServiceImpl>()
             .AddScoped<IUsersService, UsersServiceImpl>()
-            .AddScoped<IProjectService, ProjectServiceImpl>();
+            .AddScoped<IProjectService, ProjectServiceImpl>()
+            .AddScoped<IRoleHelperService, RoleHelperServiceImpl>();
     }
 }

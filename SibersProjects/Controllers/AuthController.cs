@@ -59,7 +59,7 @@ public class AuthController : Controller
         {
             return new LoginResponse
             {
-                Token = _tokenService.GenerateUserToken(user)
+                Token = await _tokenService.GenerateUserToken(user)
             };
         }
 
@@ -76,7 +76,7 @@ public class AuthController : Controller
             user = await _userManager.FindByIdAsync(subClaim);
         return Ok(new
         {
-            Claims = User.Claims.Select(claim => new string[] { claim.Type, claim.Value }),
+            Claims = User.Claims.Select(claim => new [] { claim.Type, claim.Value }),
             User = user
         });
     }

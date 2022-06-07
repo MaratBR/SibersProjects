@@ -1,16 +1,20 @@
 using Microsoft.AspNetCore.Identity;
 using SibersProjects.Models;
+using SibersProjects.Services.RoleHelperService;
 using SibersProjects.Services.UsersService.Exceptions;
+using SibersProjects.Utils;
 
 namespace SibersProjects.Services.UsersService;
 
 public class UsersServiceImpl : IUsersService
 {
+    private readonly IRoleHelperService _roleHelperService;
     private readonly UserManager<User> _userManager;
     
-    public UsersServiceImpl(UserManager<User> userManager)
+    public UsersServiceImpl(UserManager<User> userManager, IRoleHelperService roleHelperService)
     {
         _userManager = userManager;
+        _roleHelperService = roleHelperService;
     }
     
     /// <param name="options"></param>
@@ -65,6 +69,8 @@ public class UsersServiceImpl : IUsersService
         // хэшируем пароль в обход валидации
         user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, settings.Password);
         await _userManager.CreateAsync(user);
+        await _roleHelperService.EnsureRoleExists(RoleNames.Superuser);
+        await _userManager.AddToRoleAsync(user, RoleNames.Superuser);
         return user;
 ;    }
 

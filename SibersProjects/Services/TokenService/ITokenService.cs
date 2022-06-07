@@ -4,5 +4,5 @@ namespace SibersProjects.Services.TokenService;
 
 public interface ITokenService
 {
-    string GenerateUserToken(User user);
+    Task<string> GenerateUserToken(User user);
 }

@@ -15,7 +15,7 @@ using SibersProjects.Utils;
 namespace SibersProjects.Controllers;
 
 [ApiController]
-[Authorize(Roles = "Superuser")]
+[Authorize(Roles = RoleNames.Superuser)]
 [Route("api/[controller]")]
 public class EmployeesController : Controller
 {
@@ -29,16 +29,27 @@ public class EmployeesController : Controller
         _usersService = usersService;
         _mapper = mapper;
     }
+
+    public class GetEmployeesOptions
+    {
+        [Range(1, 2000)]
+        public int Page { get; set; } = 1;
+        [Range(20, 100)] public int PageSize { get; set; } = 50;
+
+    }
     
     [HttpGet]
-    public async Task<PaginationResponse<UserDto>> GetEmployees()
+    public async Task<PaginationResponse<UserDto>> GetEmployees(GetEmployeesOptions options)
     {
         var employees = await _userManager.Users
+            .Skip(options.PageSize * options.Page)
             .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
             .ToListAsync();
         return new PaginationResponse<UserDto>
         {
-            Items = employees
+            Items = employees,
+            Page = options.Page,
+            PageSize = options.PageSize
         };
     }
 
@@ -48,7 +59,7 @@ public class EmployeesController : Controller
         try
         {
             var user = await _usersService.Create(options);
-            return Created(Url.Action(nameof(GetUser), _mapper.Map<User, UserDto>(user))!, new { Id = user.Id });
+            return Created(Url.Action(nameof(GetUser), new { id = user.Id })!, _mapper.Map<User, UserDto>(user));
         }
         catch (IdentityUserException e)
         {

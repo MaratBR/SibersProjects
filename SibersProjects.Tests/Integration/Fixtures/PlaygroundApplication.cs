@@ -8,11 +8,8 @@ namespace SibersProjects.Tests.Integration.Fixtures;
 
 public class PlaygroundApplication : WebApplicationFactory<Program>
 {
-
-    public PlaygroundApplication()
-    {
-    }
-
+    private readonly Guid _appId = Guid.NewGuid();
+    
     protected override IHost CreateHost(IHostBuilder builder)
     {
         builder.UseEnvironment("Testing");
@@ -22,7 +19,7 @@ public class PlaygroundApplication : WebApplicationFactory<Program>
         {
             services.AddMvcCore().AddApplicationPart(typeof(Program).Assembly);
             services.AddScoped(sp => new DbContextOptionsBuilder<AppDbContext>()
-                .UseInMemoryDatabase("Testing")
+                .UseInMemoryDatabase("Testing" + _appId)
                 .UseApplicationServiceProvider(sp)
                 .Options);
         });

@@ -1,5 +1,6 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using SibersProjects.Configuration;
 using SibersProjects.Models;
@@ -9,13 +10,15 @@ namespace SibersProjects.Services.TokenService;
 public class TokenServiceImpl : ITokenService
 {
     private readonly JwtSettings _jwtSettings;
-    
-    public TokenServiceImpl(JwtSettings jwtSettings)
+    private readonly UserManager<User> _userManager;
+
+    public TokenServiceImpl(JwtSettings jwtSettings, UserManager<User> userManager)
     {
         _jwtSettings = jwtSettings;
+        _userManager = userManager;
     }
     
-    public string GenerateUserToken(User user)
+    public async Task<string> GenerateUserToken(User user)
     {
         var claims = new List<Claim>
         {
@@ -24,7 +27,9 @@ public class TokenServiceImpl : ITokenService
             new(JwtRegisteredClaimNames.UniqueName, user.UserName),
         };
 
-        claims.AddRange(user.Roles.Select(role => new Claim(ClaimTypes.Role, role.Name)));
+        var roles = await _userManager.GetRolesAsync(user);
+
+        claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
         var token = new JwtSecurityToken(
             issuer: _jwtSettings.Issuer,
