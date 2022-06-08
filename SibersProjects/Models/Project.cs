@@ -14,7 +14,9 @@ public class Project
     public int Priority { get; set; } = 0;
     public DateTime StartsAt { get; set; }
     public DateTime EndsAt { get; set; }
-    public string ProjectManagerId { get; set; } = string.Empty;
-    public User ProjectManager { get; set; } = null!;
+    public string? ProjectManagerId { get; set; } = string.Empty;
+    public User? ProjectManager { get; set; } = null!;
     public ICollection<User> Employees { get; set; } = null!;
+    public ICollection<WorkTask> Tasks { get; set; } = null!;
+
 }

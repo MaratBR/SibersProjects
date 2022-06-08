@@ -9,6 +9,8 @@ public class AppDbContext : IdentityDbContext<User, Role, string, IdentityUserCl
     // EF сделает все за нас поэтому просто поставим null чтобы IDE не ругалось
     public virtual DbSet<Project> Projects { get; set; } = null!;
     public virtual DbSet<ProjectAssignment> Assignments { get; set; } = null!;
+    public virtual DbSet<WorkTask> Tasks { get; set; } = null!;
+
     
     private readonly ILoggerFactory _loggerFactory;
 

@@ -1,16 +1,19 @@
 using Microsoft.EntityFrameworkCore;
 using SibersProjects.Models;
 using SibersProjects.Services.ProjectService.Exceptions;
+using SibersProjects.Services.TaskService;
 
 namespace SibersProjects.Services.ProjectService;
 
 public class ProjectServiceImpl : IProjectService
 {
     private readonly AppDbContext _dbContext;
+    private readonly ITaskService _taskService;
     
-    public ProjectServiceImpl(AppDbContext dbContext)
+    public ProjectServiceImpl(AppDbContext dbContext, ITaskService taskService)
     {
         _dbContext = dbContext;
+        _taskService = taskService;
     }
 
     public IQueryable<Project> GetProjectsQuery(ProjectFilterOptions filterOptions)
@@ -87,9 +90,11 @@ public class ProjectServiceImpl : IProjectService
     }
 
     public async Task<ProjectAssignment> AssignEmployee(User employee, Project project)
-    {
-        // TODO: exception try/catch
-        var assignment = new ProjectAssignment { Employee = employee, Project = project };
+    { 
+        var assignment = await _dbContext.Assignments.Where(a => a.EmployeeId == employee.Id && a.ProjectId == project.Id).FirstOrDefaultAsync();
+        if (assignment != null)
+            return assignment;
+        assignment = new ProjectAssignment { EmployeeId = employee.Id, ProjectId = project.Id };
         _dbContext.Add(assignment);
         await _dbContext.SaveChangesAsync();
         return assignment;
@@ -106,6 +111,8 @@ public class ProjectServiceImpl : IProjectService
             // TODO: throw
             return;
         }
+
+        await _taskService.CancelAllTaskAssignmentsOnProject(projectId, employeeId);
 
         _dbContext.Remove(assignment);
         await _dbContext.SaveChangesAsync();

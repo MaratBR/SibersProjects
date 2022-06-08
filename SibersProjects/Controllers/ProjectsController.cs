@@ -9,6 +9,7 @@ using SibersProjects.Dto;
 using SibersProjects.Models;
 using SibersProjects.Services.ProjectService;
 using SibersProjects.Services.ProjectService.Exceptions;
+using SibersProjects.Services.TaskService;
 using SibersProjects.Utils;
 
 namespace SibersProjects.Controllers;
@@ -90,7 +91,7 @@ public class ProjectsController : Controller
         if (!User.IsInRole(RoleNames.Superuser))
         {
             var userId = User.GetUserId();
-            if (userId != project.ProjectManager.Id && !await _projectService.IsAssignedToProject(userId, project.Id))
+            if (userId != project.ProjectManager?.Id && !await _projectService.IsAssignedToProject(userId, project.Id))
             {
                 return Forbid();
             }
@@ -190,24 +191,24 @@ public class ProjectsController : Controller
     }
 
 
-    [HttpDelete("{id}/assignments/{userId}")]
+    [HttpDelete("{projectId}/assignments/{userId}")]
     [Authorize(Roles = $"{RoleNames.Superuser}, {RoleNames.ProjectManager}")]
-
-    public async Task<IActionResult> CancelAssignment(int id, string userId)
+    public async Task<IActionResult> CancelAssignment(int projectId, string userId, [FromServices] ITaskService taskService)
     {
-        if (!await _dbContext.Projects.Where(p => p.Id == id).AnyAsync())
+        if (!await _dbContext.Projects.Where(p => p.Id == projectId).AnyAsync())
         {
-            return NotFound($"Проект с идентификатором {id} не найден");
+            return NotFound($"Проект с идентификатором {projectId} не найден");
         }
         if (!await _dbContext.Users.Where(u => u.Id == userId).AnyAsync())
         {
             return NotFound($"Пользователь с идентификатором {userId} не найден");
         }
-        if (!User.IsInRole(RoleNames.Superuser) && !await _projectService.IsProjectManagerOf(User.GetUserId(), id))
+        if (!User.IsInRole(RoleNames.Superuser) && !await _projectService.IsProjectManagerOf(User.GetUserId(), projectId))
         {
             return Forbid();
         }
-        await _projectService.CancelProjectAssignment(userId, id);
+
+        await _projectService.CancelProjectAssignment(userId, projectId);
         return Ok();
     }
 }
