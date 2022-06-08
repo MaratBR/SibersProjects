@@ -41,7 +41,7 @@ builder.Services
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
             ValidateAudience = false,
-            ValidAlgorithms = new []{"HS256"},
+            ValidAlgorithms = new[] { "HS256" },
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.SecretKey))
         };
     });
@@ -53,22 +53,21 @@ builder.Services.AddAuthorization(options =>
         .AddAuthenticationSchemes(JwtBearerDefaults.AuthenticationScheme)
         .Build();
 });
-    
+
 
 var sqliteConnectionString = builder.Configuration.GetConnectionString("SQLite") ?? "DefaultDatabase.sqlite3";
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlite(sqliteConnectionString);
-;});
+    ;
+});
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
-{
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+// The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
-}
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -92,4 +91,6 @@ app.Run();
 
 
 // для тестов: https://docs.microsoft.com/en-us/aspnet/core/test/integration-tests?view=aspnetcore-6.0&viewFallbackFrom=aspnetcore-3.0#basic-tests-with-the-default-webapplicationfactory
-public partial class Program { }
+public partial class Program
+{
+}

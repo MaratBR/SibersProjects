@@ -17,14 +17,14 @@ public class TokenServiceImpl : ITokenService
         _jwtSettings = jwtSettings;
         _userManager = userManager;
     }
-    
+
     public async Task<string> GenerateUserToken(User user)
     {
         var claims = new List<Claim>
         {
             new(JwtRegisteredClaimNames.Sub, user.Id),
             new(JwtRegisteredClaimNames.Email, user.Email),
-            new(JwtRegisteredClaimNames.UniqueName, user.UserName),
+            new(JwtRegisteredClaimNames.UniqueName, user.UserName)
         };
 
         var roles = await _userManager.GetRolesAsync(user);
@@ -32,11 +32,11 @@ public class TokenServiceImpl : ITokenService
         claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
         var token = new JwtSecurityToken(
-            issuer: _jwtSettings.Issuer,
+            _jwtSettings.Issuer,
             expires: DateTime.UtcNow.Add(_jwtSettings.TokenLifetime),
-            claims:claims,
+            claims: claims,
             signingCredentials: new SigningCredentials(
-                _jwtSettings.GetSecurityKey(), 
+                _jwtSettings.GetSecurityKey(),
                 SecurityAlgorithms.HmacSha256));
 
         var tokenHandler = new JwtSecurityTokenHandler();

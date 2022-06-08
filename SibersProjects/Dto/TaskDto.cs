@@ -3,7 +3,7 @@ using SibersProjects.Models;
 namespace SibersProjects.Dto;
 
 /// <summary>
-/// Базовый DTO класс задачи с минимумом информации
+///     Базовый DTO класс задачи с минимумом информации
 /// </summary>
 public class TaskDto
 {

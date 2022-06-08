@@ -1,5 +1,3 @@
-using System.Linq.Expressions;
-
 namespace SibersProjects.Models;
 
 public class Project
@@ -18,5 +16,4 @@ public class Project
     public User? ProjectManager { get; set; } = null!;
     public ICollection<User> Employees { get; set; } = null!;
     public ICollection<WorkTask> Tasks { get; set; } = null!;
-
 }

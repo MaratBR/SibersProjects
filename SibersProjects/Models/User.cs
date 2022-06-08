@@ -1,4 +1,3 @@
-using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Identity;
 
 namespace SibersProjects.Models;
@@ -10,7 +9,7 @@ public class User : IdentityUser
 
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
-    
+
     // Отчество не обязательно, но не будем его отмечать как nullable
     // потому что тогда в контроллере придется использовать пустую строку как 
     // показатель отсутствия значения

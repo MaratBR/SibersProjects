@@ -4,6 +4,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.DependencyInjection;
 using SibersProjects.Configuration;
+using SibersProjects.Dto;
 using SibersProjects.Models;
 using SibersProjects.Services;
 
@@ -29,6 +30,7 @@ public class BaseTest
         ServiceCollection.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("Testing" + Guid.NewGuid()));
         ServiceCollection.AddApplicationServices();
         ServiceCollection.AddApplicationConfigurationSections();
+        ServiceCollection.AddAutoMapper(typeof(AutoMapperProfile));
     }
 
     protected IServiceProvider ServiceProvider => _serviceProvider ??= ServiceCollection.BuildServiceProvider();

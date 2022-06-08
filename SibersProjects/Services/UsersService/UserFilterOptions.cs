@@ -1,6 +1,6 @@
 namespace SibersProjects.Services.UsersService;
 
-public class UsersFilterOptions
+public class UserFilterOptions
 {
     public enum SortByEnum
     {

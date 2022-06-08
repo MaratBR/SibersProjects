@@ -4,14 +4,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace SibersProjects.Models;
 
-public class AppDbContext : IdentityDbContext<User, Role, string, IdentityUserClaim<string>, IdentityUserRole<string>, IdentityUserLogin<string>, IdentityRoleClaim<string>, IdentityUserToken<string>>
+public class AppDbContext : IdentityDbContext<User, Role, string, IdentityUserClaim<string>, IdentityUserRole<string>,
+    IdentityUserLogin<string>, IdentityRoleClaim<string>, IdentityUserToken<string>>
 {
-    // EF сделает все за нас поэтому просто поставим null чтобы IDE не ругалось
-    public virtual DbSet<Project> Projects { get; set; } = null!;
-    public virtual DbSet<ProjectAssignment> Assignments { get; set; } = null!;
-    public virtual DbSet<WorkTask> Tasks { get; set; } = null!;
-
-    
     private readonly ILoggerFactory _loggerFactory;
 
 
@@ -19,6 +14,11 @@ public class AppDbContext : IdentityDbContext<User, Role, string, IdentityUserCl
     {
         _loggerFactory = loggerFactory;
     }
+
+    // EF сделает все за нас поэтому просто поставим null чтобы IDE не ругалось
+    public virtual DbSet<Project> Projects { get; set; } = null!;
+    public virtual DbSet<ProjectAssignment> Assignments { get; set; } = null!;
+    public virtual DbSet<WorkTask> Tasks { get; set; } = null!;
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -41,6 +41,4 @@ public class AppDbContext : IdentityDbContext<User, Role, string, IdentityUserCl
 
         builder.Entity<Project>().HasOne(p => p.ProjectManager);
     }
-    
-    
 }

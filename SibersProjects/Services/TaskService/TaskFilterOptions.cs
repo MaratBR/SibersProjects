@@ -1,6 +1,5 @@
 using SibersProjects.Models;
 
-
 namespace SibersProjects.Services.TaskService;
 
 public class TaskFilterOptions
@@ -11,9 +10,8 @@ public class TaskFilterOptions
         NewestToOldest,
         OldestToNewest
     }
-    
+
     public WorkTask.StatusEnum? Status { get; set; }
     public SortByEnum SortBy { get; set; } = SortByEnum.NewestToOldest;
     public int? ProjectId { get; set; }
-
-} 
+}

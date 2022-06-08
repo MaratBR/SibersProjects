@@ -10,7 +10,7 @@ public static class ServiceCollectionExtensions
 {
     public static void AddApplicationServices(this IServiceCollection serviceCollection)
     {
-        serviceCollection 
+        serviceCollection
             .AddScoped<ITokenService, TokenServiceImpl>()
             .AddScoped<IUsersService, UsersServiceImpl>()
             .AddScoped<IProjectService, ProjectServiceImpl>()

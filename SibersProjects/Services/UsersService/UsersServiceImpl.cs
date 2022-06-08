@@ -1,5 +1,9 @@
 using System.Security.Claims;
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using SibersProjects.Dto;
 using SibersProjects.Models;
 using SibersProjects.Services.RoleHelperService;
 using SibersProjects.Services.UsersService.Exceptions;
@@ -9,15 +13,42 @@ namespace SibersProjects.Services.UsersService;
 
 public class UsersServiceImpl : IUsersService
 {
+    private readonly IMapper _mapper;
     private readonly IRoleHelperService _roleHelperService;
     private readonly UserManager<User> _userManager;
-    
-    public UsersServiceImpl(UserManager<User> userManager, IRoleHelperService roleHelperService)
+
+    public UsersServiceImpl(UserManager<User> userManager, IRoleHelperService roleHelperService, IMapper mapper)
     {
         _userManager = userManager;
         _roleHelperService = roleHelperService;
+        _mapper = mapper;
     }
-    
+
+    public Task<User?> GetUser(ClaimsPrincipal claimsPrincipal)
+    {
+        return _userManager.FindByIdAsync(claimsPrincipal.GetUserId())!;
+    }
+
+    public async Task<Pagination<UserDto>> PaginateUsers(UserPaginationOptions options)
+    {
+        return new Pagination<UserDto>
+        {
+            Page = options.Page,
+            PageSize = options.PageSize,
+            Items = await GetUsersQueryable(options)
+                .Skip(options.PageSize * (options.Page - 1))
+                .Take(options.PageSize)
+                .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
+                .ToListAsync()
+        };
+    }
+
+    public Task<UserDto?> GetById(string id)
+    {
+        return _userManager.Users.Where(u => u.Id == id).ProjectTo<UserDto>(_mapper.ConfigurationProvider)
+            .FirstOrDefaultAsync();
+    }
+
     /// <param name="options"></param>
     /// <returns>Новый ползовател</returns>
     /// <exception cref="IdentityUserException">Если UserManager.CreateAsync вернет ошибки</exception>
@@ -31,13 +62,10 @@ public class UsersServiceImpl : IUsersService
             UserName = options.UserName,
             Email = options.Email
         };
-        
+
         var result = await _userManager.CreateAsync(user, options.Password);
 
-        if (result.Succeeded)
-        {
-            return user;
-        }
+        if (result.Succeeded) return user;
 
         throw new IdentityUserException(result.Errors);
     }
@@ -58,13 +86,11 @@ public class UsersServiceImpl : IUsersService
             var roles = await _userManager.GetRolesAsync(user);
             await _userManager.RemoveFromRolesAsync(user, roles.Except(options.Roles));
             var newRoles = options.Roles.Except(roles).ToList();
-            foreach (var role in newRoles)
-            {
-                await _roleHelperService.EnsureRoleExists(role);
-            }
+            foreach (var role in newRoles) await _roleHelperService.EnsureRoleExists(role);
 
             await _userManager.AddToRolesAsync(user, newRoles);
         }
+
         return user;
     }
 
@@ -79,7 +105,7 @@ public class UsersServiceImpl : IUsersService
             LastName = settings.UserName,
             Patronymic = settings.UserName,
             UserName = settings.UserName,
-            Email = settings.Email,
+            Email = settings.Email
         };
         // хэшируем пароль в обход валидации
         user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, settings.Password);
@@ -87,40 +113,38 @@ public class UsersServiceImpl : IUsersService
         await _roleHelperService.EnsureRoleExists(RoleNames.Superuser);
         await _userManager.AddToRoleAsync(user, RoleNames.Superuser);
         return user;
-;    }
+        ;
+    }
 
     public DefaultUserSettings GetDefaultUserSettings()
     {
         return new DefaultUserSettings();
     }
 
-    public IQueryable<User> GetUsersQueryable(UsersFilterOptions options)
+    #region Utils
+
+    private IQueryable<User> GetUsersQueryable(UserFilterOptions options)
     {
-        IQueryable<User> queryable = _userManager.Users;
+        var queryable = _userManager.Users;
 
         switch (options.SortBy)
         {
-            case UsersFilterOptions.SortByEnum.NewestToOldest:
+            case UserFilterOptions.SortByEnum.NewestToOldest:
                 queryable = queryable.OrderByDescending(u => u.CreatedAt);
                 break;
-            case UsersFilterOptions.SortByEnum.OldestToNewest:
+            case UserFilterOptions.SortByEnum.OldestToNewest:
                 queryable = queryable.OrderBy(u => u.CreatedAt);
                 break;
-            case UsersFilterOptions.SortByEnum.Name:
+            case UserFilterOptions.SortByEnum.Name:
                 queryable = queryable.OrderBy(u => u.LastName).ThenBy(u => u.FirstName).ThenBy(u => u.Patronymic);
                 break;
         }
 
         if (options.Roles != null && options.Roles.Count > 0)
-        {
             queryable = queryable.Where(u => u.Roles.Any(r => options.Roles.Contains(r.Name)));
-        }
 
         return queryable;
     }
 
-    public Task<User?> GetUser(ClaimsPrincipal claimsPrincipal)
-    {
-        return _userManager.FindByIdAsync(claimsPrincipal.GetUserId())!;
-    }
+    #endregion
 }

@@ -1,4 +1,3 @@
-using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using Microsoft.AspNetCore.Identity;
 

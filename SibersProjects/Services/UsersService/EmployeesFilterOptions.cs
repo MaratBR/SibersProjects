@@ -6,6 +6,6 @@ public class EmployeesFilterOptions
     {
         FirsName
     }
-    
+
     public SortByEnum Type { get; set; }
 }

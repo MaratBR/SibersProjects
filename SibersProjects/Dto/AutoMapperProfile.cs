@@ -1,8 +1,9 @@
+using AutoMapper;
 using SibersProjects.Models;
 
 namespace SibersProjects.Dto;
 
-public class AutoMapperProfile : AutoMapper.Profile
+public class AutoMapperProfile : Profile
 {
     public AutoMapperProfile()
     {
@@ -10,7 +11,7 @@ public class AutoMapperProfile : AutoMapper.Profile
 
         CreateMap<Project, ProjectListItemDto>()
             .ForMember(
-                p => p.EmployeesTotal, 
+                p => p.EmployeesTotal,
                 m => m.MapFrom(p => p.Employees.Count));
         CreateMap<Project, ProjectDetailsDto>();
         CreateMap<Project, ProjectBaseDto>();

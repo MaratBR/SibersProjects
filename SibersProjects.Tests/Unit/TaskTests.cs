@@ -80,12 +80,12 @@ public class TaskTests : BaseTest
     {
         var user = await ServiceProvider.GetRequiredService<IUsersService>().GetOrCreateDefaultUser();
         var taskService = ServiceProvider.GetRequiredService<ITaskService>();
-        await taskService.Create(user.Id, new NewTaskData
+        await Assert.ThrowsAsync<TaskException>(() => taskService.Create(user.Id, new NewTaskData
         {
             Description = "123",
             Name = "234",
             ProjectId = 1000
-        });
+        }));
     }
     
 }
