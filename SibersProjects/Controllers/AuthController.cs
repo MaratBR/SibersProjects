@@ -54,7 +54,7 @@ public class AuthController : Controller
         {
             if (request.Login.ToUpper() == _usersService.GetDefaultUserSettings().UserName.ToUpper())
             {
-                user = await _usersService.CreateDefaultUser();
+                user = await _usersService.GetOrCreateDefaultUser();
             }
             else
             {

@@ -45,7 +45,7 @@ public class ProjectsController : Controller
 
     [Authorize(Roles = RoleNames.Superuser)]
     [HttpGet]
-    public async Task<ActionResult<PaginationResponse<ProjectListItemDto>>> GetProjects([FromQuery] GetProjectsRequest options)
+    public async Task<ActionResult<Pagination<ProjectListItemDto>>> GetProjects([FromQuery] GetProjectsRequest options)
     {
         var projects = await _projectService.GetProjectsQuery(options)
             .Skip((options.Page - 1) * options.PageSize)
@@ -53,7 +53,7 @@ public class ProjectsController : Controller
             .ProjectTo<ProjectListItemDto>(_mapper.ConfigurationProvider)
             .ToListAsync();
 
-        return new PaginationResponse<ProjectListItemDto>
+        return new Pagination<ProjectListItemDto>
         {
             Page = options.Page,
             PageSize = options.PageSize,
@@ -67,7 +67,7 @@ public class ProjectsController : Controller
     {
         try
         {
-            var project = await _projectService.CreateProject(request);
+            var project = await _projectService.Create(request);
             return _mapper.Map<Project, ProjectBaseDto>(project);
         }
         catch (ProjectException e)
@@ -129,7 +129,7 @@ public class ProjectsController : Controller
     #endregion
     
     [HttpGet("assigned")]
-    public async Task<PaginationResponse<ProjectListItemDto>> GetAssignedProjects([FromQuery] GetProjectsRequest request)
+    public async Task<Pagination<ProjectListItemDto>> GetAssignedProjects([FromQuery] GetProjectsRequest request)
     {
         var userId = User.GetUserId();
         var assignedProjects = await _projectService
@@ -138,7 +138,7 @@ public class ProjectsController : Controller
             .ProjectTo<ProjectListItemDto>(_mapper.ConfigurationProvider)
             .ToListAsync();
 
-        return new PaginationResponse<ProjectListItemDto>
+        return new Pagination<ProjectListItemDto>
         {
             Items = assignedProjects,
             Page = request.Page,
@@ -148,7 +148,7 @@ public class ProjectsController : Controller
 
     [Authorize(Roles = $"{RoleNames.Superuser}, {RoleNames.Superuser}")]
     [HttpGet("managed")]
-    public async Task<PaginationResponse<ProjectListItemDto>> GetManagingProjects([FromQuery] GetProjectsRequest request)
+    public async Task<Pagination<ProjectListItemDto>> GetManagingProjects([FromQuery] GetProjectsRequest request)
     {
         var userId = User.GetUserId();
         var projects = await _projectService
@@ -157,7 +157,7 @@ public class ProjectsController : Controller
             .ProjectTo<ProjectListItemDto>(_mapper.ConfigurationProvider)
             .ToListAsync();
 
-        return new PaginationResponse<ProjectListItemDto>
+        return new Pagination<ProjectListItemDto>
         {
             Items = projects,
             Page = request.Page,
@@ -208,6 +208,7 @@ public class ProjectsController : Controller
             return Forbid();
         }
 
+        await taskService.CancelAllTaskAssignmentsOnProject(projectId, userId);
         await _projectService.CancelProjectAssignment(userId, projectId);
         return Ok();
     }

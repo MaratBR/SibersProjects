@@ -56,7 +56,7 @@ public class ProjectTests : AuthenticationTestsBase
         await context.SaveChangesAsync();
         var response = await Client.GetAsync("api/Projects/managed");
         response.EnsureSuccessStatusCode();
-        var data = await response.Content.ReadFromJsonAsync<PaginationResponse<ProjectListItemDto>>();
+        var data = await response.Content.ReadFromJsonAsync<Pagination<ProjectListItemDto>>();
         Assert.NotNull(data);
         Assert.Single(data!.Items);
     }
@@ -84,7 +84,7 @@ public class ProjectTests : AuthenticationTestsBase
         response = await Client.GetAsync($"api/Projects/assigned");;
         response.EnsureSuccessStatusCode();
         {
-            var data = await response.Content.ReadFromJsonAsync<PaginationResponse<ProjectListItemDto>>();
+            var data = await response.Content.ReadFromJsonAsync<Pagination<ProjectListItemDto>>();
             Assert.NotNull(data);
             Assert.Single(data!.Items);
         }

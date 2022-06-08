@@ -10,7 +10,7 @@ public interface IProjectService
     /// <param name="filterOptions"></param>
     /// <returns>IQueryable с отфильтрованными проектами</returns>
     IQueryable<Project> GetProjectsQuery(ProjectFilterOptions filterOptions);
-    Task<Project> CreateProject(NewProjectOptions options);
+    Task<Project> Create(NewProjectOptions options);
     Task<ProjectAssignment> AssignEmployee(User employee, Project project);
     Task CancelProjectAssignment(string employeeId, int projectId);
     Task<Project> Update(Project project, ProjectUpdateData data);

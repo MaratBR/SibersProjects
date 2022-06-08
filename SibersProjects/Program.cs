@@ -8,9 +8,6 @@ using SibersProjects.Configuration;
 using SibersProjects.Dto;
 using SibersProjects.Models;
 using SibersProjects.Services;
-using SibersProjects.Services.UsersService;
-using SibersProjects.Services.ProjectService;
-using SibersProjects.Services.TokenService;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -88,7 +85,6 @@ app.UseEndpoints(endpoints =>
 using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
 {
     var roleManager = serviceScope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
-    
 }
 
 

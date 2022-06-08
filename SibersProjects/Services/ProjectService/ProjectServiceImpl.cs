@@ -8,12 +8,10 @@ namespace SibersProjects.Services.ProjectService;
 public class ProjectServiceImpl : IProjectService
 {
     private readonly AppDbContext _dbContext;
-    private readonly ITaskService _taskService;
     
-    public ProjectServiceImpl(AppDbContext dbContext, ITaskService taskService)
+    public ProjectServiceImpl(AppDbContext dbContext)
     {
         _dbContext = dbContext;
-        _taskService = taskService;
     }
 
     public IQueryable<Project> GetProjectsQuery(ProjectFilterOptions filterOptions)
@@ -61,9 +59,9 @@ public class ProjectServiceImpl : IProjectService
         return query;
     }
 
-    public async Task<Project> CreateProject(NewProjectOptions options)
+    public async Task<Project> Create(NewProjectOptions options)
     {
-        if (!await _dbContext.Users.Where(e => e.Id == options.ProjectManagerId).AnyAsync())
+        if (options.ProjectManagerId != null && !await _dbContext.Users.Where(e => e.Id == options.ProjectManagerId).AnyAsync())
         {
             throw new InvalidProjectManager(options.ProjectManagerId);
         }
@@ -111,9 +109,7 @@ public class ProjectServiceImpl : IProjectService
             // TODO: throw
             return;
         }
-
-        await _taskService.CancelAllTaskAssignmentsOnProject(projectId, employeeId);
-
+        
         _dbContext.Remove(assignment);
         await _dbContext.SaveChangesAsync();
     }

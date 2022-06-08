@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Identity;
 namespace SibersProjects.Services.UsersService.Exceptions;
 
 [Serializable]
-public class IdentityUserException : EmployeeException
+public class IdentityUserException : UserException
 {
     public IEnumerable<IdentityError> Errors { get; }
     

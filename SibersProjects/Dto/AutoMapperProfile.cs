@@ -12,15 +12,11 @@ public class AutoMapperProfile : AutoMapper.Profile
             .ForMember(
                 p => p.EmployeesTotal, 
                 m => m.MapFrom(p => p.Employees.Count));
-        CreateMap<Project, ProjectDetailsDto>()
-            .ForMember(
-                p => p.Tasks,
-                m => m.MapFrom(p => p.Tasks.Take(20)))
-            .ForMember(
-                p => p.Tasks,
-                m => m.MapFrom(p => p.Tasks.Count));
+        CreateMap<Project, ProjectDetailsDto>();
         CreateMap<Project, ProjectBaseDto>();
 
         CreateMap<Role, string>().ConvertUsing(role => role.Name);
+        CreateMap<WorkTask, TaskDto>();
+        CreateMap<WorkTask, TaskDetailsDto>();
     }
 }

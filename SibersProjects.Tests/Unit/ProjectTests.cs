@@ -12,9 +12,9 @@ public class ProjectTests : BaseTest
     public async Task TestNewProject()
     {
         var usersService = ServiceProvider.GetRequiredService<IUsersService>();
-        var user = await usersService.CreateDefaultUser();
+        var user = await usersService.GetOrCreateDefaultUser();
         var projectService = ServiceProvider.GetRequiredService<IProjectService>();
-        await projectService.CreateProject(new NewProjectOptions
+        await projectService.Create(new NewProjectOptions
         {
             Name = "my project",
             StartsAt = DateTime.Now,
@@ -30,11 +30,11 @@ public class ProjectTests : BaseTest
     public async Task TestNewProjectDateValidation()
     {
         var usersService = ServiceProvider.GetRequiredService<IUsersService>();
-        var user = await usersService.CreateDefaultUser();
+        var user = await usersService.GetOrCreateDefaultUser();
         var projectService = ServiceProvider.GetRequiredService<IProjectService>();
         await Assert.ThrowsAsync<InvalidProjectTimeSpan>(async () =>
         {
-            await projectService.CreateProject(new NewProjectOptions
+            await projectService.Create(new NewProjectOptions
             {
                 Name = "my project",
                 EndsAt = DateTime.Now,

@@ -3,21 +3,21 @@ using System.Runtime.Serialization;
 namespace SibersProjects.Services.UsersService.Exceptions;
 
 [Serializable]
-public class EmployeeException : Exception
+public class UserException : Exception
 {
-    public EmployeeException()
+    public UserException()
     {
     }
 
-    public EmployeeException(string message) : base(message)
+    public UserException(string message) : base(message)
     {
     }
 
-    public EmployeeException(string message, Exception inner) : base(message, inner)
+    public UserException(string message, Exception inner) : base(message, inner)
     {
     }
 
-    protected EmployeeException(
+    protected UserException(
         SerializationInfo info,
         StreamingContext context) : base(info, context)
     {

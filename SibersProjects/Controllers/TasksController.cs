@@ -3,12 +3,14 @@ using AutoMapper;
 using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.TagHelpers.Cache;
 using Microsoft.EntityFrameworkCore;
 using SibersProjects.Dto;
 using SibersProjects.Models;
 using SibersProjects.Services.ProjectService;
 using SibersProjects.Services.TaskService;
 using SibersProjects.Services.TaskService.Exceptions;
+using SibersProjects.Services.UsersService;
 using SibersProjects.Utils;
 
 namespace SibersProjects.Controllers;
@@ -22,13 +24,38 @@ public class TasksController : Controller
     private readonly IMapper _mapper;
     private readonly AppDbContext _dbContext;
     private readonly IProjectService _projectService;
+    private readonly IUsersService _usersService;
 
-    public TasksController(ITaskService taskService, IMapper mapper, AppDbContext dbContext, IProjectService projectService)
+    public TasksController(ITaskService taskService, IMapper mapper, AppDbContext dbContext, IProjectService projectService, IUsersService usersService)
     {
         _taskService = taskService;
         _mapper = mapper;
         _dbContext = dbContext;
         _projectService = projectService;
+        _usersService = usersService;
+    }
+
+    [HttpPost]
+    [Authorize(Roles = $"{RoleNames.Superuser}, {RoleNames.ProjectManager}")]
+    public async Task<IActionResult> Create(NewTaskData data)
+    {
+        if (!User.IsInRole(RoleNames.ProjectManager) &&
+            !await _projectService.IsAssignedToProject(User.GetUserId(), data.ProjectId))
+        {
+            return Forbid();
+        }
+        
+        try
+        {
+            var task = await _taskService.Create(User.GetUserId(), data);
+
+            return Created(Url.Action(nameof(GetTask), new { id = task.Id })!, new { task.Id });
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            throw;
+        }
     }
 
     public class GetTasksQuery : TaskFilterOptions
@@ -114,7 +141,14 @@ public class TasksController : Controller
             return Forbid();
         }
 
-        await _taskService.AssignTo(data.UserId, task.Id);
+        try
+        {
+            await _taskService.AssignTo(task, data.UserId);
+        }
+        catch (InvalidAssigneeException e)
+        {
+            return BadRequest(e.Message);
+        }
 
         return Ok();
     }
@@ -138,8 +172,8 @@ public class TasksController : Controller
     }
 
 
-    [HttpGet("assigned/{projectId}")]
-    public async Task<PaginationResponse<TaskDto>> GetAssignedTasks([FromQuery] GetTasksQuery query)
+    [HttpGet("assigned")]
+    public async Task<Pagination<TaskDto>> GetAssignedTasks([FromQuery] GetTasksQuery query)
     {
         var tasks = await _taskService.GetTaskQuery(query)
             .Skip(query.PageSize * (query.Page - 1))
@@ -147,7 +181,7 @@ public class TasksController : Controller
             .ProjectTo<TaskDto>(_mapper.ConfigurationProvider)
             .ToListAsync();
 
-        return new PaginationResponse<TaskDto>
+        return new Pagination<TaskDto>
         {
             Items = tasks,
             Page = query.Page,

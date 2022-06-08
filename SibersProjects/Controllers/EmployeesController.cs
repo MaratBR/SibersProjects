@@ -39,14 +39,14 @@ public class EmployeesController : Controller
     }
     
     [HttpGet]
-    public async Task<PaginationResponse<UserDto>> GetEmployees([FromQuery] GetEmployeesOptions options)
+    public async Task<Pagination<UserDto>> GetEmployees([FromQuery] GetEmployeesOptions options)
     {
         var employees = await _usersService.GetUsersQueryable(options)
             .Skip(options.PageSize * (options.Page - 1))
             .Take(options.PageSize)
             .ProjectTo<UserDto>(_mapper.ConfigurationProvider)
             .ToListAsync();
-        return new PaginationResponse<UserDto>
+        return new Pagination<UserDto>
         {
             Items = employees,
             Page = options.Page,

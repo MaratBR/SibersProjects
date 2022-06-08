@@ -23,7 +23,7 @@ public class AuthenticationTestsBase
     protected async Task<(User, string)> CreateDefaultUser()
     {
         var usersService = Application.Server.Services.GetRequiredService<IUsersService>();
-        var user = await usersService.CreateDefaultUser();
+        var user = await usersService.GetOrCreateDefaultUser();
         return (user, usersService.GetDefaultUserSettings().Password);
     }
     

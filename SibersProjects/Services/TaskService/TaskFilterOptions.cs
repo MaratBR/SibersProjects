@@ -14,4 +14,6 @@ public class TaskFilterOptions
     
     public WorkTask.StatusEnum? Status { get; set; }
     public SortByEnum SortBy { get; set; } = SortByEnum.NewestToOldest;
+    public int? ProjectId { get; set; }
+
 } 

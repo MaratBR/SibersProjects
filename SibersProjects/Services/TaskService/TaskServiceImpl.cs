@@ -15,13 +15,38 @@ public class TaskServiceImpl : ITaskService
         _context = context;
         _projectService = projectService;
     }
-    
+
+    public async Task<WorkTask> Create(string authorId, NewTaskData data)
+    {
+        if (!await _context.Projects.Where(p => p.Id == data.ProjectId).AnyAsync())
+        {
+            throw new TaskException($"Проект с идентификатором {data.ProjectId} не найден");
+        }
+        if (!await _context.Users.Where(u => u.Id == authorId).AnyAsync())
+        {
+            throw new TaskException($"Пользователь с идентификатором {authorId} не найден");
+        }
+        var task = new WorkTask
+        {
+            ProjectId = data.ProjectId,
+            Name = data.Name,
+            Description = data.Description,
+            AuthorId = authorId,
+            Priority = data.Priority,
+        };
+        _context.Add(task);
+        await _context.SaveChangesAsync();
+        return task;
+    }
+
     public IQueryable<WorkTask> GetTaskQuery(TaskFilterOptions options)
     {
         IQueryable<WorkTask> queryable = _context.Tasks;
 
         if (options.Status != null)
             queryable = queryable.Where(t => t.Status == options.Status);
+        if (options.ProjectId == null)
+            queryable = queryable.Where(t => t.ProjectId == options.ProjectId);
 
         switch (options.SortBy)
         {
@@ -44,12 +69,11 @@ public class TaskServiceImpl : ITaskService
         return _context.Tasks.Where(t => t.Id == taskId && t.AssigneeId == userId).AnyAsync();
     }
 
-    public async Task AssignTo(string userId, int taskId)
+    public async Task AssignTo(WorkTask task, string userId)
     {
-        var task = await _context.Tasks.Where(t => t.Id == taskId).FirstOrDefaultAsync();
-        if (task == null)
+        if (!await _projectService.IsAssignedToProject(userId, task.ProjectId))
         {
-            return;
+            throw new InvalidAssigneeException(userId, "сотрудник не назначен на проект");
         }
         if (task.AssigneeId == userId)
             return;

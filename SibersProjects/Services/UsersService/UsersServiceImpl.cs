@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using Microsoft.AspNetCore.Identity;
 using SibersProjects.Models;
 using SibersProjects.Services.RoleHelperService;
@@ -52,13 +53,27 @@ public class UsersServiceImpl : IUsersService
         if (options.Email != string.Empty)
             user.Email = options.Email;
         await _userManager.UpdateAsync(user);
+        if (options.Roles != null)
+        {
+            var roles = await _userManager.GetRolesAsync(user);
+            await _userManager.RemoveFromRolesAsync(user, roles.Except(options.Roles));
+            var newRoles = options.Roles.Except(roles).ToList();
+            foreach (var role in newRoles)
+            {
+                await _roleHelperService.EnsureRoleExists(role);
+            }
+
+            await _userManager.AddToRolesAsync(user, newRoles);
+        }
         return user;
     }
 
-    public async Task<User> CreateDefaultUser()
+    public async Task<User> GetOrCreateDefaultUser()
     {
         var settings = GetDefaultUserSettings();
-        var user = new User
+        var user = await _userManager.FindByNameAsync(settings.UserName);
+        if (user != null) return user;
+        user = new User
         {
             FirstName = settings.UserName,
             LastName = settings.UserName,
@@ -102,5 +117,10 @@ public class UsersServiceImpl : IUsersService
         }
 
         return queryable;
+    }
+
+    public Task<User?> GetUser(ClaimsPrincipal claimsPrincipal)
+    {
+        return _userManager.FindByIdAsync(claimsPrincipal.GetUserId())!;
     }
 }

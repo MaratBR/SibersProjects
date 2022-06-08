@@ -13,13 +13,14 @@ public class PlaygroundApplication : WebApplicationFactory<Program>
     protected override IHost CreateHost(IHostBuilder builder)
     {
         builder.UseEnvironment("Testing");
+        var dbFile = Path.GetTempFileName();
 
         // Add mock/test services to the builder here
         builder.ConfigureServices(services =>
         {
             services.AddMvcCore().AddApplicationPart(typeof(Program).Assembly);
             services.AddScoped(sp => new DbContextOptionsBuilder<AppDbContext>()
-                .UseInMemoryDatabase("Testing" + _appId)
+                .UseSqlite($"Data Source={dbFile}")
                 .UseApplicationServiceProvider(sp)
                 .Options);
         });
