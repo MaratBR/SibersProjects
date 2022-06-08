@@ -11,6 +11,8 @@ public class ProjectFilterOptions
         EndsAt,
         Priority,
         ProjectManager,
+        Contractor,
+        Client,
         Default = Name
     }
     
@@ -20,4 +22,6 @@ public class ProjectFilterOptions
     public DateTime? EndsBefore { get; set; }
     public SortByEnum SortBy { get; set; } = SortByEnum.Default;
     public List<string>? ProjectManagers { get; set; }
+    public string? Contractor { get; set; }
+    public string? Client { get; set; }
 }

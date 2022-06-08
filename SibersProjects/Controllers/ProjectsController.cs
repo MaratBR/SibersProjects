@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,7 @@ using SibersProjects.Utils;
 namespace SibersProjects.Controllers;
 
 [ApiController]
+[Authorize]
 [Route("api/[controller]")]
 public class ProjectsController : Controller
 {
@@ -40,18 +42,7 @@ public class ProjectsController : Controller
         [Range(10, 50)] public int PageSize { get; set; } = 20;
     }
 
-    public class ProjectView
-    {
-        public class ManagerView
-        {
-            public int Id { get; set; }
-            public string DisplayName { get; set; }
-        }
-
-        public Project Project { get; set; } = null!;
-        public ManagerView Manager { get; set; } = null!;
-    }
-
+    [Authorize(Roles = RoleNames.Superuser)]
     [HttpGet]
     public async Task<ActionResult<PaginationResponse<ProjectListItemDto>>> GetProjects([FromQuery] GetProjectsRequest options)
     {
@@ -69,18 +60,14 @@ public class ProjectsController : Controller
         };
     }
 
-    public class NewProjectResponse
-    {
-        public Project Project { get; set; } = null!;
-    }
-
+    [Authorize(Roles = RoleNames.Superuser)]
     [HttpPost]
-    public async Task<ActionResult<NewProjectResponse>> CreateNewProject([FromBody] NewProjectOptions request)
+    public async Task<ActionResult<ProjectBaseDto>> CreateNewProject([FromBody] NewProjectOptions request)
     {
         try
         {
             var project = await _projectService.CreateProject(request);
-            return new NewProjectResponse { Project = project };
+            return _mapper.Map<Project, ProjectBaseDto>(project);
         }
         catch (ProjectException e)
         {
@@ -99,10 +86,20 @@ public class ProjectsController : Controller
 
         if (project == null)
             return NotFound($"Проект с идентификатором {id} не найден");
+        
+        if (!User.IsInRole(RoleNames.Superuser))
+        {
+            var userId = User.GetUserId();
+            if (userId != project.ProjectManager.Id && !await _projectService.IsAssignedToProject(userId, project.Id))
+            {
+                return Forbid();
+            }
+        }
 
         return project;
     }
 
+    [Authorize(Roles = RoleNames.Superuser)]
     [HttpDelete("{id}")]
     public async Task<IActionResult> DeleteProject(int id)
     {
@@ -116,6 +113,7 @@ public class ProjectsController : Controller
     }
 
     [HttpPatch("{id}")]
+    [Authorize(Roles = RoleNames.Superuser)]
     public async Task<IActionResult> UpdateProject(int id, [FromBody] ProjectUpdateData data)
     {
         var project = await _dbContext.Projects.Where(p => p.Id == id).FirstOrDefaultAsync();
@@ -128,25 +126,73 @@ public class ProjectsController : Controller
     }
 
     #endregion
+    
+    [HttpGet("assigned")]
+    public async Task<PaginationResponse<ProjectListItemDto>> GetAssignedProjects([FromQuery] GetProjectsRequest request)
+    {
+        var userId = User.GetUserId();
+        var assignedProjects = await _projectService
+            .GetProjectsQuery(request)
+            .Where(p => p.Employees.Any(e => e.Id == userId))
+            .ProjectTo<ProjectListItemDto>(_mapper.ConfigurationProvider)
+            .ToListAsync();
+
+        return new PaginationResponse<ProjectListItemDto>
+        {
+            Items = assignedProjects,
+            Page = request.Page,
+            PageSize = request.PageSize
+        };
+    }
+
+    [Authorize(Roles = $"{RoleNames.Superuser}, {RoleNames.Superuser}")]
+    [HttpGet("managed")]
+    public async Task<PaginationResponse<ProjectListItemDto>> GetManagingProjects([FromQuery] GetProjectsRequest request)
+    {
+        var userId = User.GetUserId();
+        var projects = await _projectService
+            .GetProjectsQuery(request)
+            .Where(p => p.ProjectManagerId == userId)
+            .ProjectTo<ProjectListItemDto>(_mapper.ConfigurationProvider)
+            .ToListAsync();
+
+        return new PaginationResponse<ProjectListItemDto>
+        {
+            Items = projects,
+            Page = request.Page,
+            PageSize = request.PageSize
+        };
+    }
 
     public class AssignRequest
     {
         [Required] public string UserId { get; set; } = string.Empty;
     }
 
+    [Authorize(Roles = $"{RoleNames.Superuser}, {RoleNames.ProjectManager}")]
     [HttpPost("{id}/assignments")]
     public async Task<IActionResult> Assign(int id, [FromBody] AssignRequest request)
     {
+        var project = await _dbContext.Projects.Where(p => p.Id == id).FirstOrDefaultAsync();
+        if (project == null)
+            return NotFound($"Проект с идентификатором {id} не найден");
+
+        // только менежер проекта и суперпользоатель может назначить кого-то на проект
+        if (!User.IsInRole(RoleNames.Superuser) && !await _projectService.IsProjectManagerOf(User.GetUserId(), id))
+        {
+            return Forbid();
+        }
         var user = await _userManager.FindByIdAsync(request.UserId);
         if (user == null)
             return NotFound($"Пользователь {id} не найден");
-        var project = await _dbContext.Projects.Where(p => p.Id == id).FirstOrDefaultAsync();
         await _projectService.AssignEmployee(user, project);
         return Ok();
     }
 
 
     [HttpDelete("{id}/assignments/{userId}")]
+    [Authorize(Roles = $"{RoleNames.Superuser}, {RoleNames.ProjectManager}")]
+
     public async Task<IActionResult> CancelAssignment(int id, string userId)
     {
         if (!await _dbContext.Projects.Where(p => p.Id == id).AnyAsync())
@@ -156,6 +202,10 @@ public class ProjectsController : Controller
         if (!await _dbContext.Users.Where(u => u.Id == userId).AnyAsync())
         {
             return NotFound($"Пользователь с идентификатором {userId} не найден");
+        }
+        if (!User.IsInRole(RoleNames.Superuser) && !await _projectService.IsProjectManagerOf(User.GetUserId(), id))
+        {
+            return Forbid();
         }
         await _projectService.CancelProjectAssignment(userId, id);
         return Ok();

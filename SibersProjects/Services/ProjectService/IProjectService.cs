@@ -14,5 +14,7 @@ public interface IProjectService
     Task<ProjectAssignment> AssignEmployee(User employee, Project project);
     Task CancelProjectAssignment(string employeeId, int projectId);
     Task<Project> Update(Project project, ProjectUpdateData data);
+    Task<bool> IsAssignedToProject(string userId, int projectId);
+    Task<bool> IsProjectManagerOf(string userId, int projectId);
 }
 

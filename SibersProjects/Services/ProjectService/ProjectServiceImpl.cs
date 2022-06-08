@@ -23,6 +23,12 @@ public class ProjectServiceImpl : IProjectService
             query = query.Where(p => p.EndsAt <= filterOptions.EndsBefore);
         if (filterOptions.ProjectManagers != null && filterOptions.ProjectManagers.Count > 0)
             query = query.Where(p => filterOptions.ProjectManagers.Contains(p.ProjectManagerId));
+        
+        // TODO: NormalizedContractorCompany, NormalizedClientCompany
+        if (filterOptions.Contractor != null)
+            query = query.Where(p => p.ContractorCompany == filterOptions.Contractor);
+        if (filterOptions.Client != null)
+            query = query.Where(p => p.ClientCompany == filterOptions.Client);
 
         switch (filterOptions.SortBy)
         {
@@ -40,6 +46,12 @@ public class ProjectServiceImpl : IProjectService
                 break;
             case ProjectFilterOptions.SortByEnum.Priority:
                 query = query.OrderByDescending(p => p.Priority);
+                break;
+            case ProjectFilterOptions.SortByEnum.Client:
+                query = query.OrderBy(p => p.ClientCompany);
+                break;
+            case ProjectFilterOptions.SortByEnum.Contractor:
+                query = query.OrderBy(p => p.ContractorCompany);
                 break;
         }
 
@@ -117,5 +129,15 @@ public class ProjectServiceImpl : IProjectService
             project.ProjectManagerId = data.ProjectManagerId;
         await _dbContext.SaveChangesAsync();
         return project;
+    }
+
+    public Task<bool> IsAssignedToProject(string userId, int projectId)
+    {
+        return _dbContext.Assignments.Where(a => a.EmployeeId == userId && a.ProjectId == projectId).AnyAsync();
+    }
+
+    public Task<bool> IsProjectManagerOf(string userId, int projectId)
+    {
+        return _dbContext.Projects.Where(p => p.Id == projectId && p.ProjectManagerId == userId).AnyAsync();
     }
 }

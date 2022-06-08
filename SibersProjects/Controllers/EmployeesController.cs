@@ -15,7 +15,7 @@ using SibersProjects.Utils;
 namespace SibersProjects.Controllers;
 
 [ApiController]
-//[Authorize(Roles = RoleNames.Superuser)]
+[Authorize(Roles = RoleNames.Superuser)]
 [Route("api/[controller]")]
 public class EmployeesController : Controller
 {

@@ -1,5 +1,6 @@
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 using SibersProjects.Models;
 using SibersProjects.Services.UsersService;
@@ -7,15 +8,15 @@ using SibersProjects.Tests.Integration.Fixtures;
 
 namespace SibersProjects.Tests.Integration;
 
-public class AuthenticationTestsBase : IClassFixture<PlaygroundApplication>
+public class AuthenticationTestsBase
 {
     protected readonly PlaygroundApplication Application;
     protected readonly HttpClient Client;
 
-    public AuthenticationTestsBase(PlaygroundApplication application)
+    public AuthenticationTestsBase()
     {
-        Application = application;
-        Client = application.CreateClient();
+        Application = new PlaygroundApplication();
+        Client = Application.CreateClient();
     }
 
     
@@ -39,6 +40,19 @@ public class AuthenticationTestsBase : IClassFixture<PlaygroundApplication>
 
         var token = data["token"];
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        return user;
+    }
+    
+    protected async Task<User> CreateUser(string userName, string password)
+    {
+        var userManager = Application.Services.GetRequiredService<UserManager<User>>();
+        var user = new User
+        {
+            UserName = userName,
+            Email = userName + "@qwerty.ru",
+        };
+        user.PasswordHash = userManager.PasswordHasher.HashPassword(user, password);
+        await userManager.CreateAsync(user);
         return user;
     }
 

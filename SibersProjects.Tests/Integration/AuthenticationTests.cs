@@ -18,8 +18,4 @@ public class AuthenticationTests : AuthenticationTestsBase
         var response = await Client.GetAsync("/api/Auth/whoami");
         response.EnsureSuccessStatusCode();
     }
-
-    public AuthenticationTests(PlaygroundApplication application) : base(application)
-    {
-    }
 }

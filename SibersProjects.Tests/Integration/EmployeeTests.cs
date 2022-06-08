@@ -12,9 +12,6 @@ namespace SibersProjects.Tests.Integration;
 
 public class EmployeeTests : AuthenticationTestsBase
 {
-    public EmployeeTests(PlaygroundApplication application) : base(application)
-    {
-    }
     
     [InlineData("Patronymic", "UserWithPatronymic")]
     [InlineData(null, "UserWithoutPatronymic")]
