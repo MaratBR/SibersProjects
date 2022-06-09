@@ -4,6 +4,11 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=6bef7990_002Dafb5_002D46d4_002D9eac_002D447a0eed7e35/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="All tests from Solution #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
   &lt;Solution /&gt;
 &lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=89ce35eb_002De0bb_002D460f_002D9a87_002De48d1313ebd1/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="CancelTaskAssignment" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;
+  &lt;TestAncestor&gt;
+    &lt;TestId&gt;xUnit::8FB630DE-B712-4689-B416-D37C6322D82B::net6.0::SibersProjects.Tests.Unit.TaskTests.CancelTaskAssignment&lt;/TestId&gt;
+  &lt;/TestAncestor&gt;
+&lt;/SessionState&gt;</s:String>
 	
 	
 	</wpf:ResourceDictionary>

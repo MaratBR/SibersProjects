@@ -73,6 +73,8 @@ public class TaskTests : BaseTest
         await Assert.ThrowsAsync<InvalidAssigneeException>(() => taskService.AssignTo(task, user.Id));
         await projectService.AssignEmployee(user, project);
         await taskService.AssignTo(task, user.Id);
+
+        Assert.True(await taskService.IsAssignedTo(user.Id, task.Id));
     }
 
     [Fact]
@@ -86,6 +88,16 @@ public class TaskTests : BaseTest
             Name = "234",
             ProjectId = 1000
         }));
+    }
+    
+    [Fact]
+    public async Task CancelTaskAssignment()
+    {
+        await AssignTask();
+        var taskService = ServiceProvider.GetRequiredService<ITaskService>();
+        var task = await taskService.Get(1);
+        Assert.NotNull(task);
+        await taskService.CancelTaskAssignment(task!);
     }
     
 }

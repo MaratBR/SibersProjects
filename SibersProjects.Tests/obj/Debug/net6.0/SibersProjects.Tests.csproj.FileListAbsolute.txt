@@ -2,9 +2,6 @@
 /home/marat/RiderProjects/SibersProjects/SibersProjects.Tests/bin/Debug/net6.0/SibersProjects.deps.json
 /home/marat/RiderProjects/SibersProjects/SibersProjects.Tests/bin/Debug/net6.0/SibersProjects.runtimeconfig.json
 /home/marat/RiderProjects/SibersProjects/SibersProjects.Tests/bin/Debug/net6.0/spa.proxy.json
-/home/marat/RiderProjects/SibersProjects/SibersProjects.Tests/bin/Debug/net6.0/appsettings.Development.json
-/home/marat/RiderProjects/SibersProjects/SibersProjects.Tests/bin/Debug/net6.0/appsettings.json
-/home/marat/RiderProjects/SibersProjects/SibersProjects.Tests/bin/Debug/net6.0/appsettings.Testing.json
 /home/marat/RiderProjects/SibersProjects/SibersProjects.Tests/bin/Debug/net6.0/SibersProjects
 /home/marat/RiderProjects/SibersProjects/SibersProjects.Tests/bin/Debug/net6.0/Microsoft.TestPlatform.PlatformAbstractions.dll
 /home/marat/RiderProjects/SibersProjects/SibersProjects.Tests/bin/Debug/net6.0/xunit.runner.visualstudio.dotnetcore.testadapter.dll
@@ -442,3 +439,6 @@
 /home/marat/RiderProjects/SibersProjects/SibersProjects.Tests/bin/Debug/net6.0/Microsoft.Extensions.Configuration.UserSecrets.dll
 /home/marat/RiderProjects/SibersProjects/SibersProjects.Tests/bin/Debug/net6.0/Microsoft.Extensions.Hosting.dll
 /home/marat/RiderProjects/SibersProjects/SibersProjects.Tests/obj/Debug/net6.0/MvcTestingAppManifest.json
+/home/marat/RiderProjects/SibersProjects/SibersProjects.Tests/bin/Debug/net6.0/appsettings.Development.json
+/home/marat/RiderProjects/SibersProjects/SibersProjects.Tests/bin/Debug/net6.0/appsettings.Testing.json
+/home/marat/RiderProjects/SibersProjects/SibersProjects.Tests/bin/Debug/net6.0/appsettings.json

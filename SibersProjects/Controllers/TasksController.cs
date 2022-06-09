@@ -20,10 +20,8 @@ namespace SibersProjects.Controllers;
 [Route("api/[controller]")]
 public class TasksController : Controller
 {
-    private readonly IMapper _mapper;
     private readonly IProjectService _projectService;
     private readonly ITaskService _taskService;
-    private readonly IUsersService _usersService;
 
     public TasksController(
         ITaskService taskService, 
@@ -32,7 +30,6 @@ public class TasksController : Controller
     {
         _taskService = taskService;
         _projectService = projectService;
-        _usersService = usersService;
     }
 
     [HttpPost]
