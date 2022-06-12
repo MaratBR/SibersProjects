@@ -90,7 +90,6 @@
         <None Include="Properties/launchSettings.json" />
         <None Include="Services/Common/DefaultPaginationOptions.cs" />
         <None Include="Services/Common/IPaginationOptions.cs" />
-        <None Include="Services/PermissionsService/IPermissionsService.cs" />
         <None Include="Services/ProjectService/Exceptions/InvalidProjectManager.cs" />
         <None Include="Services/ProjectService/Exceptions/InvalidProjectTimeSpan.cs" />
         <None Include="Services/ProjectService/Exceptions/ProjectException.cs" />

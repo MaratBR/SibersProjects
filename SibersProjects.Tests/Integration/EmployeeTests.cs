@@ -41,12 +41,4 @@ public class EmployeeTests : AuthenticationTestsBase
         Assert.Equal(2, await dbContext.Users.CountAsync());
         await userManager.DeleteAsync(user);
     }
-
-    [Fact]
-    public async Task TestEmployeesList()
-    {
-        
-    }
-
-    
 }

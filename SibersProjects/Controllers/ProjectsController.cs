@@ -170,7 +170,14 @@ public class ProjectsController : Controller
         if (project == null)
             return NotFound($"Проект с идентификатором {id} не найден");
 
-        await _projectService.Update(project, data);
+        try
+        {
+            await _projectService.Update(project, data);
+        }
+        catch (ProjectException e)
+        {
+            return UnprocessableEntity(e.Message);
+        }
         return Ok();
     }
 

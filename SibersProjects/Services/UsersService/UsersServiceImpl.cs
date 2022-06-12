@@ -50,7 +50,7 @@ public class UsersServiceImpl : IUsersService
     }
 
     /// <param name="options"></param>
-    /// <returns>Новый ползовател</returns>
+    /// <returns>Новый пользователь</returns>
     /// <exception cref="IdentityUserException">Если UserManager.CreateAsync вернет ошибки</exception>
     public async Task<User> Create(NewUserOptions options)
     {
