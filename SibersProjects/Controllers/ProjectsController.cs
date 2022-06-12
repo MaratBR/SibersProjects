@@ -178,6 +178,7 @@ public class ProjectsController : Controller
         {
             return UnprocessableEntity(e.Message);
         }
+
         return Ok();
     }
 

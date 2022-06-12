@@ -14,121 +14,121 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="AutoMapper" Version="11.0.1" />
-        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.5" />
-        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.5" />
-        <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="6.0.5" />
-        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.5" />
+        <PackageReference Include="AutoMapper" Version="11.0.1"/>
+        <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="11.0.0"/>
+        <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="6.0.5"/>
+        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.5"/>
+        <PackageReference Include="Microsoft.AspNetCore.SpaProxy" Version="6.0.5"/>
+        <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.5"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.5">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.5" />
+        <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="6.0.5"/>
     </ItemGroup>
 
     <ItemGroup>
-        <InternalsVisibleTo Include="SibersProjects.Tests" />
+        <InternalsVisibleTo Include="SibersProjects.Tests"/>
     </ItemGroup>
 
     <ItemGroup>
-        <None Include=".dockerignore" />
-        <None Include=".gitignore" />
+        <None Include=".dockerignore"/>
+        <None Include=".gitignore"/>
         <None Include="appsettings.Development.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Include="appsettings.Testing.json">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Include="appsettings.json">
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
-        <None Include="Configuration/ConfigurationExtensions.cs" />
-        <None Include="Configuration/JwtSettings.cs" />
-        <None Include="Controllers/AuthController.cs" />
-        <None Include="Controllers/EmployeesController.cs" />
-        <None Include="Controllers/ProjectsController.cs" />
-        <None Include="Controllers/TasksController.cs" />
-        <None Include="Dockerfile" />
-        <None Include="Dto/AutoMapperProfile.cs" />
-        <None Include="Dto/ProjectBaseDto.cs" />
-        <None Include="Dto/ProjectDetailsDto.cs" />
-        <None Include="Dto/ProjectListItemDto.cs" />
-        <None Include="Dto/TaskDetailsDto.cs" />
-        <None Include="Dto/TaskDto.cs" />
-        <None Include="Dto/UserDto.cs" />
-        <None Include="Migrations/20220606124904_InitialCreate.cs" />
-        <None Include="Migrations/20220606124904_InitialCreate.Designer.cs" />
-        <None Include="Migrations/20220607134643_AddCreatedAtToUser.cs" />
-        <None Include="Migrations/20220607134643_AddCreatedAtToUser.Designer.cs" />
-        <None Include="Migrations/20220608111226_Task.cs" />
-        <None Include="Migrations/20220608111226_Task.Designer.cs" />
-        <None Include="Migrations/AppDbContextModelSnapshot.cs" />
-        <None Include="Models/AppDbContext.cs" />
-        <None Include="Models/Project.cs" />
-        <None Include="Models/ProjectAssignment.cs" />
-        <None Include="Models/Role.cs" />
-        <None Include="Models/User.cs" />
-        <None Include="Models/WorkTask.cs" />
-        <None Include="obj/Debug/net6.0/.NETCoreApp,Version=v6.0.AssemblyAttributes.cs" />
-        <None Include="obj/Debug/net6.0/SibersProjects.AssemblyInfo.cs" />
-        <None Include="obj/Debug/net6.0/SibersProjects.AssemblyInfoInputs.cache" />
-        <None Include="obj/Debug/net6.0/SibersProjects.csproj.AssemblyReference.cache" />
-        <None Include="obj/Debug/net6.0/SibersProjects.GeneratedMSBuildEditorConfig.editorconfig" />
-        <None Include="obj/Debug/net6.0/SibersProjects.GlobalUsings.g.cs" />
-        <None Include="obj/project.assets.json" />
-        <None Include="obj/project.nuget.cache" />
-        <None Include="obj/project.packagespec.json" />
-        <None Include="obj/rider.project.restore.info" />
-        <None Include="obj/SibersProjects.csproj.nuget.dgspec.json" />
-        <None Include="obj/SibersProjects.csproj.nuget.g.props" />
-        <None Include="obj/SibersProjects.csproj.nuget.g.targets" />
-        <None Include="Pages/Error.cshtml" />
-        <None Include="Pages/Error.cshtml.cs" />
-        <None Include="Pages/_ViewImports.cshtml" />
-        <None Include="Program.cs" />
-        <None Include="Properties/launchSettings.json" />
-        <None Include="Services/Common/DefaultPaginationOptions.cs" />
-        <None Include="Services/Common/IPaginationOptions.cs" />
-        <None Include="Services/ProjectService/Exceptions/InvalidProjectManager.cs" />
-        <None Include="Services/ProjectService/Exceptions/InvalidProjectTimeSpan.cs" />
-        <None Include="Services/ProjectService/Exceptions/ProjectException.cs" />
-        <None Include="Services/ProjectService/IProjectService.cs" />
-        <None Include="Services/ProjectService/NewProjectOptions.cs" />
-        <None Include="Services/ProjectService/ProjectFilterOptions.cs" />
-        <None Include="Services/ProjectService/ProjectServiceImpl.cs" />
-        <None Include="Services/ProjectService/ProjectUpdateData.cs" />
-        <None Include="Services/RoleHelperService/IRoleHelperService.cs" />
-        <None Include="Services/RoleHelperService/RoleHelperServiceImpl.cs" />
-        <None Include="Services/ServiceCollectionExtensions.cs" />
-        <None Include="Services/TaskService/Exceptions/InvalidAssigneeException.cs" />
-        <None Include="Services/TaskService/Exceptions/TaskException.cs" />
-        <None Include="Services/TaskService/ITaskService.cs" />
-        <None Include="Services/TaskService/NewTaskData.cs" />
-        <None Include="Services/TaskService/TaskFilterOptions.cs" />
-        <None Include="Services/TaskService/TaskServiceImpl.cs" />
-        <None Include="Services/TaskService/TaskUpdateData.cs" />
-        <None Include="Services/TokenService/ITokenService.cs" />
-        <None Include="Services/TokenService/TokenServiceImpl.cs" />
-        <None Include="Services/UsersService/DefaultUserSettings.cs" />
-        <None Include="Services/UsersService/EmployeesFilterOptions.cs" />
-        <None Include="Services/UsersService/Exceptions/CurrentUserMissingException.cs" />
-        <None Include="Services/UsersService/Exceptions/IdentityUserException.cs" />
-        <None Include="Services/UsersService/Exceptions/UserException.cs" />
-        <None Include="Services/UsersService/Exceptions/UserNotFoundException.cs" />
-        <None Include="Services/UsersService/IUsersService.cs" />
-        <None Include="Services/UsersService/NewUserOptions.cs" />
-        <None Include="Services/UsersService/UpdateUserOptions.cs" />
-        <None Include="Services/UsersService/UserFilterOptions.cs" />
-        <None Include="Services/UsersService/UserPaginationOptions.cs" />
-        <None Include="Services/UsersService/UsersServiceExtensions.cs" />
-        <None Include="Services/UsersService/UsersServiceImpl.cs" />
-        <None Include="SibersProjects.csproj" />
-        <None Include="SibersProjects.sqlite3" />
-        <None Include="Utils/Pagination.cs" />
-        <None Include="Utils/PrincipalExtensions.cs" />
-        <None Include="Utils/RoleNames.cs" />
-        <Content Remove="appsettings.json" />
-        <None Include="appsettings.json" />
+        <None Include="Configuration/ConfigurationExtensions.cs"/>
+        <None Include="Configuration/JwtSettings.cs"/>
+        <None Include="Controllers/AuthController.cs"/>
+        <None Include="Controllers/EmployeesController.cs"/>
+        <None Include="Controllers/ProjectsController.cs"/>
+        <None Include="Controllers/TasksController.cs"/>
+        <None Include="Dockerfile"/>
+        <None Include="Dto/AutoMapperProfile.cs"/>
+        <None Include="Dto/ProjectBaseDto.cs"/>
+        <None Include="Dto/ProjectDetailsDto.cs"/>
+        <None Include="Dto/ProjectListItemDto.cs"/>
+        <None Include="Dto/TaskDetailsDto.cs"/>
+        <None Include="Dto/TaskDto.cs"/>
+        <None Include="Dto/UserDto.cs"/>
+        <None Include="Migrations/20220606124904_InitialCreate.cs"/>
+        <None Include="Migrations/20220606124904_InitialCreate.Designer.cs"/>
+        <None Include="Migrations/20220607134643_AddCreatedAtToUser.cs"/>
+        <None Include="Migrations/20220607134643_AddCreatedAtToUser.Designer.cs"/>
+        <None Include="Migrations/20220608111226_Task.cs"/>
+        <None Include="Migrations/20220608111226_Task.Designer.cs"/>
+        <None Include="Migrations/AppDbContextModelSnapshot.cs"/>
+        <None Include="Models/AppDbContext.cs"/>
+        <None Include="Models/Project.cs"/>
+        <None Include="Models/ProjectAssignment.cs"/>
+        <None Include="Models/Role.cs"/>
+        <None Include="Models/User.cs"/>
+        <None Include="Models/WorkTask.cs"/>
+        <None Include="obj/Debug/net6.0/.NETCoreApp,Version=v6.0.AssemblyAttributes.cs"/>
+        <None Include="obj/Debug/net6.0/SibersProjects.AssemblyInfo.cs"/>
+        <None Include="obj/Debug/net6.0/SibersProjects.AssemblyInfoInputs.cache"/>
+        <None Include="obj/Debug/net6.0/SibersProjects.csproj.AssemblyReference.cache"/>
+        <None Include="obj/Debug/net6.0/SibersProjects.GeneratedMSBuildEditorConfig.editorconfig"/>
+        <None Include="obj/Debug/net6.0/SibersProjects.GlobalUsings.g.cs"/>
+        <None Include="obj/project.assets.json"/>
+        <None Include="obj/project.nuget.cache"/>
+        <None Include="obj/project.packagespec.json"/>
+        <None Include="obj/rider.project.restore.info"/>
+        <None Include="obj/SibersProjects.csproj.nuget.dgspec.json"/>
+        <None Include="obj/SibersProjects.csproj.nuget.g.props"/>
+        <None Include="obj/SibersProjects.csproj.nuget.g.targets"/>
+        <None Include="Pages/Error.cshtml"/>
+        <None Include="Pages/Error.cshtml.cs"/>
+        <None Include="Pages/_ViewImports.cshtml"/>
+        <None Include="Program.cs"/>
+        <None Include="Properties/launchSettings.json"/>
+        <None Include="Services/Common/DefaultPaginationOptions.cs"/>
+        <None Include="Services/Common/IPaginationOptions.cs"/>
+        <None Include="Services/ProjectService/Exceptions/InvalidProjectManager.cs"/>
+        <None Include="Services/ProjectService/Exceptions/InvalidProjectTimeSpan.cs"/>
+        <None Include="Services/ProjectService/Exceptions/ProjectException.cs"/>
+        <None Include="Services/ProjectService/IProjectService.cs"/>
+        <None Include="Services/ProjectService/NewProjectOptions.cs"/>
+        <None Include="Services/ProjectService/ProjectFilterOptions.cs"/>
+        <None Include="Services/ProjectService/ProjectServiceImpl.cs"/>
+        <None Include="Services/ProjectService/ProjectUpdateData.cs"/>
+        <None Include="Services/RoleHelperService/IRoleHelperService.cs"/>
+        <None Include="Services/RoleHelperService/RoleHelperServiceImpl.cs"/>
+        <None Include="Services/ServiceCollectionExtensions.cs"/>
+        <None Include="Services/TaskService/Exceptions/InvalidAssigneeException.cs"/>
+        <None Include="Services/TaskService/Exceptions/TaskException.cs"/>
+        <None Include="Services/TaskService/ITaskService.cs"/>
+        <None Include="Services/TaskService/NewTaskData.cs"/>
+        <None Include="Services/TaskService/TaskFilterOptions.cs"/>
+        <None Include="Services/TaskService/TaskServiceImpl.cs"/>
+        <None Include="Services/TaskService/TaskUpdateData.cs"/>
+        <None Include="Services/TokenService/ITokenService.cs"/>
+        <None Include="Services/TokenService/TokenServiceImpl.cs"/>
+        <None Include="Services/UsersService/DefaultUserSettings.cs"/>
+        <None Include="Services/UsersService/EmployeesFilterOptions.cs"/>
+        <None Include="Services/UsersService/Exceptions/CurrentUserMissingException.cs"/>
+        <None Include="Services/UsersService/Exceptions/IdentityUserException.cs"/>
+        <None Include="Services/UsersService/Exceptions/UserException.cs"/>
+        <None Include="Services/UsersService/Exceptions/UserNotFoundException.cs"/>
+        <None Include="Services/UsersService/IUsersService.cs"/>
+        <None Include="Services/UsersService/NewUserOptions.cs"/>
+        <None Include="Services/UsersService/UpdateUserOptions.cs"/>
+        <None Include="Services/UsersService/UserFilterOptions.cs"/>
+        <None Include="Services/UsersService/UserPaginationOptions.cs"/>
+        <None Include="Services/UsersService/UsersServiceExtensions.cs"/>
+        <None Include="Services/UsersService/UsersServiceImpl.cs"/>
+        <None Include="SibersProjects.csproj"/>
+        <None Include="SibersProjects.sqlite3"/>
+        <None Include="Utils/Pagination.cs"/>
+        <None Include="Utils/PrincipalExtensions.cs"/>
+        <None Include="Utils/RoleNames.cs"/>
+        <Content Remove="appsettings.json"/>
+        <None Include="appsettings.json"/>
     </ItemGroup>
 </Project>

@@ -17,7 +17,7 @@ public class TaskTests : BaseTest
         var taskService = ServiceProvider.GetRequiredService<ITaskService>();
         var user = await ServiceProvider.GetRequiredService<IUsersService>().GetOrCreateDefaultUser();
 
-        var project = await projectService.Create(new ()
+        var project = await projectService.Create(new NewProjectOptions
         {
             Name = "Test",
             ClientCompany = "1",
@@ -25,10 +25,10 @@ public class TaskTests : BaseTest
             EndsAt = DateTime.Now.AddDays(1),
             StartsAt = DateTime.Now,
             ProjectManagerId = user.Id,
-            Priority = 1,
+            Priority = 1
         });
 
-        await taskService.Create(user.Id, new()
+        await taskService.Create(user.Id, new NewTaskData
         {
             Description = "12",
             Name = "New task",
@@ -49,8 +49,8 @@ public class TaskTests : BaseTest
         var projectService = ServiceProvider.GetRequiredService<IProjectService>();
         var taskService = ServiceProvider.GetRequiredService<ITaskService>();
         var user = await ServiceProvider.GetRequiredService<IUsersService>().GetOrCreateDefaultUser();
-        
-        var project = await projectService.Create(new ()
+
+        var project = await projectService.Create(new NewProjectOptions
         {
             Name = "Test",
             ClientCompany = "1",
@@ -58,18 +58,19 @@ public class TaskTests : BaseTest
             EndsAt = DateTime.Now.AddDays(1),
             StartsAt = DateTime.Now,
             ProjectManagerId = user.Id,
-            Priority = 1,
+            Priority = 1
         });
 
         var task = await taskService.Create(user.Id,
-        new() {
-            Description = "123",
-            Name = "123",
-            Priority = 1,
-            ProjectId = project.Id
-        });
-        
-        
+            new NewTaskData
+            {
+                Description = "123",
+                Name = "123",
+                Priority = 1,
+                ProjectId = project.Id
+            });
+
+
         await Assert.ThrowsAsync<InvalidAssigneeException>(() => taskService.AssignTo(task, user.Id));
         await projectService.AssignEmployee(user, project);
         await taskService.AssignTo(task, user.Id);
@@ -89,7 +90,7 @@ public class TaskTests : BaseTest
             ProjectId = 1000
         }));
     }
-    
+
     [Fact]
     public async Task CancelTaskAssignment()
     {
@@ -101,5 +102,4 @@ public class TaskTests : BaseTest
         await taskService.CancelTaskAssignment(task!);
         Assert.False(await taskService.IsAssignedTo(user.Id, task!.Id));
     }
-    
 }

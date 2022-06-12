@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.DependencyInjection;
 using SibersProjects.Configuration;
 using SibersProjects.Dto;
@@ -27,7 +26,8 @@ public class BaseTest
         ServiceCollection.AddIdentity<User, Role>()
             .AddEntityFrameworkStores<AppDbContext>()
             .AddDefaultTokenProviders();
-        ServiceCollection.AddDbContext<AppDbContext>(options => options.UseInMemoryDatabase("Testing" + Guid.NewGuid()));
+        ServiceCollection.AddDbContext<AppDbContext>(options =>
+            options.UseInMemoryDatabase("Testing" + Guid.NewGuid()));
         ServiceCollection.AddApplicationServices();
         ServiceCollection.AddApplicationConfigurationSections();
         ServiceCollection.AddAutoMapper(typeof(AutoMapperProfile));

@@ -157,10 +157,8 @@ public class ProjectServiceImpl : IProjectService
             project.StartsAt = (DateTime)data.StartsAt;
 
         if (project.StartsAt > project.EndsAt)
-        {
             throw new InvalidProjectTimeSpan(project.StartsAt, project.EndsAt, "дата начала позже даты конца");
-        }
-        
+
         if (data.ProjectManagerId != null)
             project.ProjectManagerId = data.ProjectManagerId;
         await _dbContext.SaveChangesAsync();

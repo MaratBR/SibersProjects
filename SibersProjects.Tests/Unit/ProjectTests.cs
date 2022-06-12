@@ -25,7 +25,7 @@ public class ProjectTests : BaseTest
         });
         Assert.Equal(1, await DbContext.Projects.CountAsync());
     }
-    
+
     [Fact]
     public async Task TestNewProjectDateValidation()
     {

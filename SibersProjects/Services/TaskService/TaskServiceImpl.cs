@@ -1,6 +1,5 @@
 using AutoMapper;
 using AutoMapper.QueryableExtensions;
-using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using SibersProjects.Dto;
 using SibersProjects.Models;
@@ -14,8 +13,8 @@ namespace SibersProjects.Services.TaskService;
 public class TaskServiceImpl : ITaskService
 {
     private readonly AppDbContext _context;
-    private readonly IProjectService _projectService;
     private readonly IMapper _mapper;
+    private readonly IProjectService _projectService;
 
     public TaskServiceImpl(AppDbContext context, IProjectService projectService, IMapper mapper)
     {
@@ -53,31 +52,6 @@ public class TaskServiceImpl : ITaskService
         return _context.Tasks.Where(t => t.Id == id)
             .ProjectTo<T>(_mapper.ConfigurationProvider)
             .SingleOrDefaultAsync();
-    }
-
-    private IQueryable<WorkTask> GetTaskQuery(TaskFilterOptions options)
-    {
-        IQueryable<WorkTask> queryable = _context.Tasks;
-
-        if (options.Status != null)
-            queryable = queryable.Where(t => t.Status == options.Status);
-        if (options.ProjectId == null)
-            queryable = queryable.Where(t => t.ProjectId == options.ProjectId);
-
-        switch (options.SortBy)
-        {
-            case TaskFilterOptions.SortByEnum.Priority:
-                queryable = queryable.OrderByDescending(t => t.Priority);
-                break;
-            case TaskFilterOptions.SortByEnum.NewestToOldest:
-                queryable = queryable.OrderByDescending(t => t.CreatedAt);
-                break;
-            case TaskFilterOptions.SortByEnum.OldestToNewest:
-                queryable = queryable.OrderBy(t => t.CreatedAt);
-                break;
-        }
-
-        return queryable;
     }
 
     public Task<bool> IsAssignedTo(string userId, int taskId)
@@ -129,7 +103,8 @@ public class TaskServiceImpl : ITaskService
         await _context.SaveChangesAsync();
     }
 
-    public async Task<Pagination<TaskDto>> PaginateTasks(TaskFilterOptions filterOptions, DefaultPaginationOptions paginationOptions)
+    public async Task<Pagination<TaskDto>> PaginateTasks(TaskFilterOptions filterOptions,
+        DefaultPaginationOptions paginationOptions)
     {
         return new Pagination<TaskDto>
         {
@@ -141,5 +116,30 @@ public class TaskServiceImpl : ITaskService
             Page = paginationOptions.Page,
             PageSize = paginationOptions.PageSize
         };
+    }
+
+    private IQueryable<WorkTask> GetTaskQuery(TaskFilterOptions options)
+    {
+        IQueryable<WorkTask> queryable = _context.Tasks;
+
+        if (options.Status != null)
+            queryable = queryable.Where(t => t.Status == options.Status);
+        if (options.ProjectId == null)
+            queryable = queryable.Where(t => t.ProjectId == options.ProjectId);
+
+        switch (options.SortBy)
+        {
+            case TaskFilterOptions.SortByEnum.Priority:
+                queryable = queryable.OrderByDescending(t => t.Priority);
+                break;
+            case TaskFilterOptions.SortByEnum.NewestToOldest:
+                queryable = queryable.OrderByDescending(t => t.CreatedAt);
+                break;
+            case TaskFilterOptions.SortByEnum.OldestToNewest:
+                queryable = queryable.OrderBy(t => t.CreatedAt);
+                break;
+        }
+
+        return queryable;
     }
 }

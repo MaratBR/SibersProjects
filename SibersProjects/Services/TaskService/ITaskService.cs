@@ -24,5 +24,7 @@ public interface ITaskService
     Task UpdateTask(WorkTask task, TaskUpdateData data);
     Task CancelAllTaskAssignmentsOnProject(int projectId, string userId);
     Task CancelTaskAssignment(WorkTask task);
-    Task<Pagination<TaskDto>> PaginateTasks(TaskFilterOptions filterOptions, DefaultPaginationOptions paginationOptions);
+
+    Task<Pagination<TaskDto>> PaginateTasks(TaskFilterOptions filterOptions,
+        DefaultPaginationOptions paginationOptions);
 }

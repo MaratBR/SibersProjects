@@ -8,8 +8,8 @@ namespace SibersProjects.Tests.Integration.Fixtures;
 
 public class PlaygroundApplication : WebApplicationFactory<Program>
 {
-    private Guid _appId = Guid.NewGuid();
-    
+    private readonly Guid _appId = Guid.NewGuid();
+
     private string GetSqliteFile(Guid id)
     {
         var folder = Path.Join(Path.GetTempPath(), "SibersProjectsTesting");
@@ -17,7 +17,7 @@ public class PlaygroundApplication : WebApplicationFactory<Program>
         var file = Path.Join(folder, $"test_{id}.sqlite3");
         return file;
     }
-    
+
     protected override IHost CreateHost(IHostBuilder builder)
     {
         var dbFile = GetSqliteFile(_appId);
@@ -34,7 +34,7 @@ public class PlaygroundApplication : WebApplicationFactory<Program>
         });
 
         var host = base.CreateHost(builder);
-        
+
         using (var serviceScope = host.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
         {
             var context = serviceScope.ServiceProvider.GetRequiredService<AppDbContext>();

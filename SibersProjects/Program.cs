@@ -1,4 +1,3 @@
-using System.Net.Http.Headers;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -21,7 +20,7 @@ builder.Services.AddCors(options =>
     {
         policyBuilder.AllowCredentials();
         policyBuilder.WithOrigins(corsSettings.AllowedOrigins.ToArray());
-        policyBuilder.WithHeaders(new []{ "Authorization", "Accept-Language", "Content-Type" });
+        policyBuilder.WithHeaders("Authorization", "Accept-Language", "Content-Type");
         policyBuilder.AllowAnyMethod();
     });
 });

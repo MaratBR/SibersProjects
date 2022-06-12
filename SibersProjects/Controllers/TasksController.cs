@@ -1,9 +1,6 @@
 using System.ComponentModel.DataAnnotations;
-using AutoMapper;
-using AutoMapper.QueryableExtensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using SibersProjects.Dto;
 using SibersProjects.Models;
 using SibersProjects.Services.Common;
@@ -24,8 +21,8 @@ public class TasksController : Controller
     private readonly ITaskService _taskService;
 
     public TasksController(
-        ITaskService taskService, 
-        IProjectService projectService, 
+        ITaskService taskService,
+        IProjectService projectService,
         IUsersService usersService)
     {
         _taskService = taskService;

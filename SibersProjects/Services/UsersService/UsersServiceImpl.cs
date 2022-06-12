@@ -67,13 +67,10 @@ public class UsersServiceImpl : IUsersService
 
         if (!result.Succeeded) throw new IdentityUserException(result.Errors);
 
-        foreach (var role in options.Roles)
-        {
-            await _roleHelperService.EnsureRoleExists(role);
-        }
+        foreach (var role in options.Roles) await _roleHelperService.EnsureRoleExists(role);
 
         await _userManager.AddToRolesAsync(user, options.Roles);
-        
+
         return user;
     }
 

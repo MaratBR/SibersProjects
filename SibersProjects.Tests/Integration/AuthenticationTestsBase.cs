@@ -19,7 +19,7 @@ public class AuthenticationTestsBase
         Client = Application.CreateClient();
     }
 
-    
+
     protected async Task<(User, string)> CreateDefaultUser()
     {
         var usersService = Application.Server.Services.GetRequiredService<IUsersService>();
@@ -39,27 +39,25 @@ public class AuthenticationTestsBase
 
         var token = data["token"];
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-
     }
-    
+
     protected async Task<User> CreateDefaultUserAndLoginClient()
     {
         var (user, password) = await CreateDefaultUser();
         await LoginClient(user.UserName, password);
         return user;
     }
-    
+
     protected async Task<User> CreateUser(string userName, string password)
     {
         var userManager = Application.Services.GetRequiredService<UserManager<User>>();
         var user = new User
         {
             UserName = userName,
-            Email = userName + "@qwerty.ru",
+            Email = userName + "@qwerty.ru"
         };
         user.PasswordHash = userManager.PasswordHasher.HashPassword(user, password);
         await userManager.CreateAsync(user);
         return user;
     }
-
 }

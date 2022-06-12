@@ -20,6 +20,7 @@ public class TokenTest : BaseTest
         Assert.Equal(jwtToken.Issuer, settings.Issuer);
         Assert.Equal(jwtToken.Subject, user.Id);
         Assert.Equal("admin", jwtToken.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.UniqueName)?.Value);
-        Assert.Equal("admin@test.net", jwtToken.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Email)?.Value);
+        Assert.Equal("admin@test.net",
+            jwtToken.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Email)?.Value);
     }
 }

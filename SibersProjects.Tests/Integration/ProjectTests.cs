@@ -6,18 +6,16 @@ using SibersProjects.Dto;
 using SibersProjects.Models;
 using SibersProjects.Services.ProjectService;
 using SibersProjects.Services.UsersService;
-using SibersProjects.Tests.Integration.Fixtures;
 using SibersProjects.Utils;
 
 namespace SibersProjects.Tests.Integration;
 
 public class ProjectTests : AuthenticationTestsBase
 {
-
     public async Task CreateNewProjectThroughApi()
     {
         var user = await CreateDefaultUserAndLoginClient();
-        var response = await Client.PostAsync("api/Projects", JsonContent.Create(new NewProjectOptions()
+        var response = await Client.PostAsync("api/Projects", JsonContent.Create(new NewProjectOptions
         {
             Name = "Мой проект",
             Priority = 42,
@@ -25,7 +23,7 @@ public class ProjectTests : AuthenticationTestsBase
             StartsAt = DateTime.Now,
             EndsAt = DateTime.Now.AddDays(1),
             ClientCompany = "12",
-            ContractorCompany = "132",
+            ContractorCompany = "132"
         }));
         response.EnsureSuccessStatusCode();
         var context = Application.Services.GetRequiredService<AppDbContext>();
@@ -39,7 +37,7 @@ public class ProjectTests : AuthenticationTestsBase
         var response = await Client.GetAsync("api/Projects/1");
         response.EnsureSuccessStatusCode();
     }
-    
+
     [Fact]
     public async Task ListManagedProjects()
     {
@@ -62,7 +60,7 @@ public class ProjectTests : AuthenticationTestsBase
         Assert.NotNull(data);
         Assert.Single(data!.Items);
     }
-    
+
     [Fact]
     public async Task AssignToProject_DefaultSuperuser_ListAssignedProjects()
     {
@@ -80,10 +78,12 @@ public class ProjectTests : AuthenticationTestsBase
         };
         context.Projects.Add(project);
         await context.SaveChangesAsync();
-        var response = await Client.PostAsync($"api/Projects/{project.Id}/assignments", JsonContent.Create(new {userId=user.Id}));
+        var response = await Client.PostAsync($"api/Projects/{project.Id}/assignments",
+            JsonContent.Create(new { userId = user.Id }));
         response.EnsureSuccessStatusCode();
 
-        response = await Client.GetAsync($"api/Projects/assigned");;
+        response = await Client.GetAsync("api/Projects/assigned");
+        ;
         response.EnsureSuccessStatusCode();
         {
             var data = await response.Content.ReadFromJsonAsync<Pagination<ProjectListItemDto>>();
@@ -96,7 +96,7 @@ public class ProjectTests : AuthenticationTestsBase
     public async Task AssignToProject_Manager()
     {
         var usersService = Application.Services.GetRequiredService<IUsersService>();
-        var user = await usersService.Create(new()
+        var user = await usersService.Create(new NewUserOptions
         {
             UserName = "Manager",
             FirstName = "Bob",
@@ -106,7 +106,7 @@ public class ProjectTests : AuthenticationTestsBase
             Roles = new List<string> { RoleNames.ProjectManager } // пусто
         });
         await LoginClient(user.UserName, "frtrhQFE#$-32");
-        
+
         var context = Application.Services.GetRequiredService<AppDbContext>();
         var project = new Project
         {
@@ -120,19 +120,20 @@ public class ProjectTests : AuthenticationTestsBase
         };
         context.Projects.Add(project);
         await context.SaveChangesAsync();
-        
-        
-        var otherUser = await usersService.Create(new()
+
+
+        var otherUser = await usersService.Create(new NewUserOptions
         {
             UserName = "Guy",
             FirstName = "Bob",
             LastName = "Whatever",
             Email = "it-does-not-matter@whatever.io",
-            Password = "frtrhQFE#$-32",
+            Password = "frtrhQFE#$-32"
             // Roles = new List<string>() // пусто
         });
 
-        var response = await Client.PostAsync($"api/Projects/{project.Id}/assignments", JsonContent.Create(new {userId=otherUser.Id}));
+        var response = await Client.PostAsync($"api/Projects/{project.Id}/assignments",
+            JsonContent.Create(new { userId = otherUser.Id }));
         response.EnsureSuccessStatusCode();
     }
 
@@ -141,16 +142,16 @@ public class ProjectTests : AuthenticationTestsBase
     {
         var context = Application.Services.GetRequiredService<AppDbContext>();
         var usersService = Application.Services.GetRequiredService<IUsersService>();
-        var user = await usersService.Create(new()
+        var user = await usersService.Create(new NewUserOptions
         {
             UserName = "IDontHaveRights",
             FirstName = "Bob",
             LastName = "Whatever",
             Email = "it-does-not-matter@whatever.io",
-            Password = "frtrhQFE#$-32",
+            Password = "frtrhQFE#$-32"
             // Roles = new List<string>() // пусто
         });
-        
+
         // хотя менежер этого проекта - IDontHaveRights, у него нет роли менеджера
         var project = new Project
         {
@@ -164,29 +165,30 @@ public class ProjectTests : AuthenticationTestsBase
         };
         context.Projects.Add(project);
         await context.SaveChangesAsync();
-        
-        var otherUser = await usersService.Create(new()
+
+        var otherUser = await usersService.Create(new NewUserOptions
         {
             UserName = "Guy",
             FirstName = "Bob",
             LastName = "Whatever",
             Email = "i-does-not-matter@whatever.io",
-            Password = "frtrhQFE#$-32",
+            Password = "frtrhQFE#$-32"
             // Roles = new List<string>() // пусто
         });
 
         await LoginClient("IDontHaveRights", "frtrhQFE#$-32");
-        
-        var response = await Client.PostAsync($"api/Projects/{project.Id}/assignments", JsonContent.Create(new {userId=otherUser.Id}));
+
+        var response = await Client.PostAsync($"api/Projects/{project.Id}/assignments",
+            JsonContent.Create(new { userId = otherUser.Id }));
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
-    
+
     [Fact]
     public async Task CannotAssignUser_HasRoleButNotSetAsManager()
     {
         var context = Application.Services.GetRequiredService<AppDbContext>();
         var usersService = Application.Services.GetRequiredService<IUsersService>();
-        var user = await usersService.Create(new()
+        var user = await usersService.Create(new NewUserOptions
         {
             UserName = "IHaveRightsButIAmNotTheManager",
             FirstName = "Bob",
@@ -195,7 +197,7 @@ public class ProjectTests : AuthenticationTestsBase
             Password = "frtrhQFE#$-32",
             Roles = new List<string>() // пусто
         });
-        
+
         var project = new Project
         {
             Name = "Test",
@@ -208,24 +210,25 @@ public class ProjectTests : AuthenticationTestsBase
         };
         context.Projects.Add(project);
         await context.SaveChangesAsync();
-        
-        var otherUser = await usersService.Create(new()
+
+        var otherUser = await usersService.Create(new NewUserOptions
         {
             UserName = "Guy",
             FirstName = "Bob",
             LastName = "Whatever",
             Email = "i-does-not-matter@whatever.io",
-            Password = "frtrhQFE#$-32",
+            Password = "frtrhQFE#$-32"
             // Roles = new List<string>() // пусто
         });
 
         await LoginClient("Guy", "frtrhQFE#$-32");
-        
-        var response = await Client.PostAsync($"api/Projects/{project.Id}/assignments", JsonContent.Create(new {userId=otherUser.Id}));
+
+        var response = await Client.PostAsync($"api/Projects/{project.Id}/assignments",
+            JsonContent.Create(new { userId = otherUser.Id }));
         Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
     }
-    
-    
+
+
     [Fact]
     public async Task CancelAssignment()
     {
@@ -274,7 +277,7 @@ public class ProjectTests : AuthenticationTestsBase
         response.EnsureSuccessStatusCode();
         Assert.Equal(0, await context.Projects.CountAsync());
     }
-    
+
     [Fact]
     public async Task ProjectCascadeDelete()
     {
@@ -313,7 +316,8 @@ public class ProjectTests : AuthenticationTestsBase
             JsonContent.Create(new { Name = "Test2", Priority = 24 }));
         response.EnsureSuccessStatusCode();
 
-        var project = await Application.Services.GetRequiredService<AppDbContext>().Projects.Where(p => p.Id == 1).SingleAsync();
+        var project = await Application.Services.GetRequiredService<AppDbContext>().Projects.Where(p => p.Id == 1)
+            .SingleAsync();
         Assert.Equal("Test2", project.Name);
         Assert.Equal(24, project.Priority);
     }

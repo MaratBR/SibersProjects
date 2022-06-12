@@ -20,7 +20,7 @@ public class UsersTests : BaseTest
         });
         Assert.Equal(1, await DbContext.Users.CountAsync());
     }
-    
+
     [Fact]
     public async Task TestNoDuplicateUsers()
     {
@@ -34,10 +34,7 @@ public class UsersTests : BaseTest
         };
         var usersService = ServiceProvider.GetRequiredService<IUsersService>();
         await usersService.Create(newUser);
-        await Assert.ThrowsAsync<IdentityUserException>(async () =>
-        {
-            await usersService.Create(newUser);
-        });
+        await Assert.ThrowsAsync<IdentityUserException>(async () => { await usersService.Create(newUser); });
         Assert.Equal(1, await DbContext.Users.CountAsync());
     }
 }
