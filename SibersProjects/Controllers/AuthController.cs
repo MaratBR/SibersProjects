@@ -16,7 +16,7 @@ namespace SibersProjects.Controllers;
 [Route("api/[controller]")]
 public class AuthController : Controller
 {
-    private const string UserNotFoundMessage = "Пользователь не найден, проверьте правильность пароля и логина";
+    private const string InvalidCredentials = "Неверный логин или пароль";
     private readonly IMapper _mapper;
     private readonly ITokenService _tokenService;
     private readonly UserManager<User> _userManager;
@@ -41,7 +41,7 @@ public class AuthController : Controller
             if (request.Login.ToUpper() == _usersService.GetDefaultUserSettings().UserName.ToUpper())
                 user = await _usersService.GetOrCreateDefaultUser();
             else
-                return NotFound(UserNotFoundMessage);
+                return Unauthorized(InvalidCredentials);
         }
 
         if (await _userManager.CheckPasswordAsync(user, request.Password))
@@ -50,7 +50,7 @@ public class AuthController : Controller
                 Token = await _tokenService.GenerateUserToken(user)
             };
 
-        return NotFound(UserNotFoundMessage);
+        return Unauthorized(InvalidCredentials);
     }
 
     [Authorize]

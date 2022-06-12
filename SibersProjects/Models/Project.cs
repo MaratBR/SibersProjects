@@ -16,4 +16,5 @@ public class Project
     public User? ProjectManager { get; set; } = null!;
     public ICollection<User> Employees { get; set; } = null!;
     public ICollection<WorkTask> Tasks { get; set; } = null!;
+    public string Description { get; set; } = string.Empty;
 }

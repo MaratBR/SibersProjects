@@ -37,7 +37,8 @@ public class ProjectServiceImpl : IProjectService
             ProjectManagerId = options.ProjectManagerId,
             Priority = options.Priority,
             StartsAt = options.StartsAt,
-            EndsAt = options.EndsAt
+            EndsAt = options.EndsAt,
+            Description = options.Description
         };
         _dbContext.Add(project);
         await _dbContext.SaveChangesAsync();

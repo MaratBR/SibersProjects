@@ -65,9 +65,16 @@ public class UsersServiceImpl : IUsersService
 
         var result = await _userManager.CreateAsync(user, options.Password);
 
-        if (result.Succeeded) return user;
+        if (!result.Succeeded) throw new IdentityUserException(result.Errors);
 
-        throw new IdentityUserException(result.Errors);
+        foreach (var role in options.Roles)
+        {
+            await _roleHelperService.EnsureRoleExists(role);
+        }
+
+        await _userManager.AddToRolesAsync(user, options.Roles);
+        
+        return user;
     }
 
     public async Task<User> Update(User user, UpdateUserOptions options)

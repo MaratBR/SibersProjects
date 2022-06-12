@@ -1,9 +1,11 @@
+using System.Net;
 using System.Net.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using SibersProjects.Dto;
 using SibersProjects.Models;
 using SibersProjects.Services.ProjectService;
+using SibersProjects.Services.UsersService;
 using SibersProjects.Tests.Integration.Fixtures;
 using SibersProjects.Utils;
 
@@ -62,7 +64,7 @@ public class ProjectTests : AuthenticationTestsBase
     }
     
     [Fact]
-    public async Task AssignUserAndListAssignedProjects()
+    public async Task AssignToProject_DefaultSuperuser_ListAssignedProjects()
     {
         var user = await CreateDefaultUserAndLoginClient();
         var context = Application.Services.GetRequiredService<AppDbContext>();
@@ -89,6 +91,140 @@ public class ProjectTests : AuthenticationTestsBase
             Assert.Single(data!.Items);
         }
     }
+
+    [Fact]
+    public async Task AssignToProject_Manager()
+    {
+        var usersService = Application.Services.GetRequiredService<IUsersService>();
+        var user = await usersService.Create(new()
+        {
+            UserName = "Manager",
+            FirstName = "Bob",
+            LastName = "Whatever",
+            Email = "it-does-not-matter@whatever.io",
+            Password = "frtrhQFE#$-32",
+            Roles = new List<string> { RoleNames.ProjectManager } // пусто
+        });
+        await LoginClient(user.UserName, "frtrhQFE#$-32");
+        
+        var context = Application.Services.GetRequiredService<AppDbContext>();
+        var project = new Project
+        {
+            Name = "Test",
+            ProjectManagerId = user.Id,
+            ClientCompany = "12",
+            ContractorCompany = "123",
+            EndsAt = DateTime.Now.AddDays(1),
+            StartsAt = DateTime.Now,
+            Priority = 42
+        };
+        context.Projects.Add(project);
+        await context.SaveChangesAsync();
+        
+        
+        var otherUser = await usersService.Create(new()
+        {
+            UserName = "Guy",
+            FirstName = "Bob",
+            LastName = "Whatever",
+            Email = "it-does-not-matter@whatever.io",
+            Password = "frtrhQFE#$-32",
+            // Roles = new List<string>() // пусто
+        });
+
+        var response = await Client.PostAsync($"api/Projects/{project.Id}/assignments", JsonContent.Create(new {userId=otherUser.Id}));
+        response.EnsureSuccessStatusCode();
+    }
+
+    [Fact]
+    public async Task CannotAssignUser_NoRole()
+    {
+        var context = Application.Services.GetRequiredService<AppDbContext>();
+        var usersService = Application.Services.GetRequiredService<IUsersService>();
+        var user = await usersService.Create(new()
+        {
+            UserName = "IDontHaveRights",
+            FirstName = "Bob",
+            LastName = "Whatever",
+            Email = "it-does-not-matter@whatever.io",
+            Password = "frtrhQFE#$-32",
+            // Roles = new List<string>() // пусто
+        });
+        
+        // хотя менежер этого проекта - IDontHaveRights, у него нет роли менеджера
+        var project = new Project
+        {
+            Name = "Test",
+            ProjectManagerId = user.Id,
+            ClientCompany = "12",
+            ContractorCompany = "123",
+            EndsAt = DateTime.Now.AddDays(1),
+            StartsAt = DateTime.Now,
+            Priority = 42
+        };
+        context.Projects.Add(project);
+        await context.SaveChangesAsync();
+        
+        var otherUser = await usersService.Create(new()
+        {
+            UserName = "Guy",
+            FirstName = "Bob",
+            LastName = "Whatever",
+            Email = "i-does-not-matter@whatever.io",
+            Password = "frtrhQFE#$-32",
+            // Roles = new List<string>() // пусто
+        });
+
+        await LoginClient("IDontHaveRights", "frtrhQFE#$-32");
+        
+        var response = await Client.PostAsync($"api/Projects/{project.Id}/assignments", JsonContent.Create(new {userId=otherUser.Id}));
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+    
+    [Fact]
+    public async Task CannotAssignUser_HasRoleButNotSetAsManager()
+    {
+        var context = Application.Services.GetRequiredService<AppDbContext>();
+        var usersService = Application.Services.GetRequiredService<IUsersService>();
+        var user = await usersService.Create(new()
+        {
+            UserName = "IHaveRightsButIAmNotTheManager",
+            FirstName = "Bob",
+            LastName = "Whatever",
+            Email = "i-does-not-matter@whatever.io",
+            Password = "frtrhQFE#$-32",
+            Roles = new List<string>() // пусто
+        });
+        
+        var project = new Project
+        {
+            Name = "Test",
+            ProjectManagerId = user.Id,
+            ClientCompany = "12",
+            ContractorCompany = "123",
+            EndsAt = DateTime.Now.AddDays(1),
+            StartsAt = DateTime.Now,
+            Priority = 42
+        };
+        context.Projects.Add(project);
+        await context.SaveChangesAsync();
+        
+        var otherUser = await usersService.Create(new()
+        {
+            UserName = "Guy",
+            FirstName = "Bob",
+            LastName = "Whatever",
+            Email = "i-does-not-matter@whatever.io",
+            Password = "frtrhQFE#$-32",
+            // Roles = new List<string>() // пусто
+        });
+
+        await LoginClient("Guy", "frtrhQFE#$-32");
+        
+        var response = await Client.PostAsync($"api/Projects/{project.Id}/assignments", JsonContent.Create(new {userId=otherUser.Id}));
+        Assert.Equal(HttpStatusCode.Forbidden, response.StatusCode);
+    }
+    
     
     [Fact]
     public async Task CancelAssignment()
@@ -139,7 +275,7 @@ public class ProjectTests : AuthenticationTestsBase
         Assert.Equal(0, await context.Projects.CountAsync());
     }
     
-    [Fact(Skip = "InMemory, оказывается, не поддерживает ON DELETE CASCADE (https://github.com/dotnet/efcore/issues/3924)")]
+    [Fact]
     public async Task ProjectCascadeDelete()
     {
         var user = await CreateDefaultUserAndLoginClient();

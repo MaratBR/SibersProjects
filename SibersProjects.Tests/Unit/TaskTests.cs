@@ -94,10 +94,12 @@ public class TaskTests : BaseTest
     public async Task CancelTaskAssignment()
     {
         await AssignTask();
+        var user = await ServiceProvider.GetRequiredService<IUsersService>().GetOrCreateDefaultUser();
         var taskService = ServiceProvider.GetRequiredService<ITaskService>();
         var task = await taskService.Get(1);
         Assert.NotNull(task);
         await taskService.CancelTaskAssignment(task!);
+        Assert.False(await taskService.IsAssignedTo(user.Id, task!.Id));
     }
     
 }

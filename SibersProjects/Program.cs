@@ -1,3 +1,4 @@
+using System.Net.Http.Headers;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
@@ -13,6 +14,17 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
+var corsSettings = builder.Configuration.GetSection(nameof(CorsSettings)).Get<CorsSettings>();
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(policyBuilder =>
+    {
+        policyBuilder.AllowCredentials();
+        policyBuilder.WithOrigins(corsSettings.AllowedOrigins.ToArray());
+        policyBuilder.WithHeaders(new []{ "Authorization", "Accept-Language", "Content-Type" });
+        policyBuilder.AllowAnyMethod();
+    });
+});
 builder.Services.AddControllersWithViews();
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 builder.Services.AddApplicationServices();
@@ -70,6 +82,7 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 
 app.UseHttpsRedirection();
+app.UseCors();
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
@@ -80,12 +93,6 @@ app.UseEndpoints(endpoints =>
     endpoints.MapControllers();
     endpoints.MapFallbackToFile("index.html");
 });
-
-using (var serviceScope = app.Services.GetRequiredService<IServiceScopeFactory>().CreateScope())
-{
-    var roleManager = serviceScope.ServiceProvider.GetRequiredService<RoleManager<Role>>();
-}
-
 
 app.Run();
 

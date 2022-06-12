@@ -133,6 +133,10 @@ namespace SibersProjects.Migrations
                         .IsRequired()
                         .HasColumnType("TEXT");
 
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
                     b.Property<DateTime>("EndsAt")
                         .HasColumnType("TEXT");
 
@@ -285,6 +289,7 @@ namespace SibersProjects.Migrations
                         .HasColumnType("TEXT");
 
                     b.Property<string>("AuthorId")
+                        .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.Property<DateTime>("CreatedAt")
@@ -405,7 +410,9 @@ namespace SibersProjects.Migrations
 
                     b.HasOne("SibersProjects.Models.User", "Author")
                         .WithMany()
-                        .HasForeignKey("AuthorId");
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("SibersProjects.Models.Project", "Project")
                         .WithMany("Tasks")

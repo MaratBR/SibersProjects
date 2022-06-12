@@ -15,4 +15,7 @@ public class NewProjectOptions
     public string? ProjectManagerId { get; set; } = string.Empty;
     [Required] public DateTime StartsAt { get; set; }
     [Required] public DateTime EndsAt { get; set; }
+
+    [MaxLength(1000)]
+    public string Description { get; set; } = string.Empty;
 }

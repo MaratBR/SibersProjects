@@ -26,12 +26,11 @@ public class AuthenticationTestsBase
         var user = await usersService.GetOrCreateDefaultUser();
         return (user, usersService.GetDefaultUserSettings().Password);
     }
-    
-    protected async Task<User> CreateDefaultUserAndLoginClient()
+
+    protected async Task LoginClient(string userName, string password)
     {
-        var (user, password) = await CreateDefaultUser();
         var response = await Client.PostAsync("/api/Auth/login",
-            JsonContent.Create(new { login = user.UserName, password }));
+            JsonContent.Create(new { login = userName, password }));
         response.EnsureSuccessStatusCode();
 
         var data = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
@@ -40,6 +39,13 @@ public class AuthenticationTestsBase
 
         var token = data["token"];
         Client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+
+    }
+    
+    protected async Task<User> CreateDefaultUserAndLoginClient()
+    {
+        var (user, password) = await CreateDefaultUser();
+        await LoginClient(user.UserName, password);
         return user;
     }
     
